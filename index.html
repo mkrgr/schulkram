@@ -117,6 +117,15 @@ button.lupe:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
 .lens svg{display:block;width:100%;height:100%}
 .lens .pg.zoom{border:0;border-radius:0}
 .lhint{margin:8px 0 0;color:var(--muted);font-size:13px;text-align:center}
+#qrdlg{border:2px solid var(--ink);border-radius:16px;background:var(--card);color:var(--ink);padding:14px 16px 16px;width:min(420px,calc(100vw - 24px));box-shadow:var(--shadow)}
+#qrdlg::backdrop{background:rgba(18,20,28,.6)}
+.qrbox{background:#fff;border-radius:12px;padding:10px;margin:4px auto 10px;width:min(340px,100%);border:1px solid var(--line)}
+.qrbox svg{display:block;width:100%;height:auto}
+.qrurl{font:13px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--muted);word-break:break-all;background:color-mix(in srgb,var(--bg) 60%,var(--card));border-radius:8px;padding:8px 10px;max-height:4.2em;overflow:auto;user-select:all}
+.qrrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;margin-top:10px}
+.qrrow label{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted);cursor:pointer}
+.qrrow label input{accent-color:var(--accent2);width:16px;height:16px;margin:0}
+.qrrow button{border:1px solid var(--ink);background:var(--ink);color:var(--card);border-radius:9px;padding:7px 12px;font-size:14px;cursor:pointer}
 .emo{display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--bg) 70%,var(--card));border:1px solid var(--line);flex:none}
 
 /* Liste */
@@ -276,6 +285,7 @@ footer a{color:inherit}
       <div class="prog"><span id="progtxt">0 von 0 besorgt</span><div class="bar"><i id="progbar"></i></div></div>
       <div class="tools">
         <button id="share" type="button" class="pri">Liste teilen</button>
+        <button id="showqr" type="button">QR-Code</button>
         <label class="opt"><input type="checkbox" id="shnotes">Notizen mitschicken</label>
         <button id="copy" type="button">Als Text kopieren</button>
         <button id="print" type="button">Drucken</button>
@@ -296,6 +306,12 @@ footer a{color:inherit}
   <div class="lhead"><div><div class="lt" id="lupet"></div><div class="ls" id="lupes"></div></div><button type="button" class="lclose" aria-label="Schließen">×</button></div>
   <div class="lstage" id="lstage"><div id="lpage"></div><div class="lens" id="lens"></div></div>
   <p class="lhint">Mit der Maus oder dem Finger über die Seite fahren.</p>
+</dialog>
+<dialog id="qrdlg" aria-labelledby="qrt">
+  <div class="lhead"><div><div class="lt" id="qrt">Liste per QR-Code</div><div class="ls" id="qrs"></div></div><button type="button" class="lclose" aria-label="Schließen">×</button></div>
+  <div class="qrbox" id="qrbig"></div>
+  <div class="qrurl" id="qrurl"></div>
+  <div class="qrrow"><label><input type="checkbox" id="qrnotes">Notizen mitschicken</label><button type="button" id="qrcopy">Link kopieren</button></div>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
 
@@ -1171,6 +1187,26 @@ $("#share").onclick = async () => {
   }
   copyText(url, "Link kopiert – z. B. in WhatsApp oder eine Mail einfügen");
 };
+
+/* QR-Code am Bildschirm */
+const qrdlg = $("#qrdlg");
+function renderQrDialog(){
+  const has = state.items.length > 0;
+  const url = has ? shareUrl() : shareBase();
+  const q = QR.encode(url, 40);
+  $("#qrt").textContent = has ? "Liste per QR-Code" : "Schulkram per QR-Code";
+  const n = state.items.reduce((a,x) => a + x.qty, 0);
+  $("#qrs").textContent = has ? `${state.items.length} Einträge, ${n} Teile · mit der Handykamera scannen` : "Die Liste ist noch leer. Der Code öffnet die App.";
+  $("#qrbig").innerHTML = q ? QR.svg(q, has ? "QR-Code: diese Liste öffnen" : "QR-Code: Schulkram öffnen") : "<p>Die Liste ist zu lang für einen QR-Code. Bitte den Link teilen.</p>";
+  $("#qrurl").textContent = url;
+  $("#qrnotes").checked = $("#shnotes").checked;
+  $("#qrnotes").parentElement.hidden = !has;
+}
+$("#showqr").onclick = () => { renderQrDialog(); if(typeof qrdlg.showModal==="function") qrdlg.showModal(); else qrdlg.setAttribute("open",""); };
+$("#qrnotes").addEventListener("change", () => { $("#shnotes").checked = $("#qrnotes").checked; updateListQR(); renderQrDialog(); });
+$("#qrcopy").onclick = () => copyText($("#qrurl").textContent, "Link kopiert");
+qrdlg.querySelector(".lclose").onclick = () => qrdlg.close();
+qrdlg.addEventListener("click", ev => { if(ev.target === qrdlg) qrdlg.close(); });
 
 function importItems(items, mode){
   if(mode==="replace") state.items = [];
