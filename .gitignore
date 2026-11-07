@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+._*
+
+# Editoren
+.vscode/
+.idea/
+*.swp
+
+# Lokale Werkzeug-Einstellungen und Caches
+.claude/settings.local.json
+.impeccable/
+
+# Abhängigkeiten / Logs (falls später ein Build dazukommt)
+node_modules/
+*.log

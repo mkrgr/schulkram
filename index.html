@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Schulkram Einkaufsliste</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f1e6; --grid:#e6dfcd; --ink:#1f2a37; --muted:#5f6a79; --card:#fffdf7;
+  --line:#ddd4bf; --accent:#bf3a20; --accent2:#2563a8; --ok:#2f8f5b; --hl:#fff0b3;
+  --shadow:0 1px 0 rgba(0,0,0,.04),0 10px 28px -14px rgba(70,45,10,.35);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#16191f; --grid:#21262f; --ink:#ebe7de; --muted:#9ba4b3; --card:#1f232b;
+    --line:#343b48; --accent:#ff7d5f; --accent2:#80b2ff; --ok:#62d093; --hl:#3a3420;
+    --shadow:0 10px 28px -14px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#16191f; --grid:#21262f; --ink:#ebe7de; --muted:#9ba4b3; --card:#1f232b;
+  --line:#343b48; --accent:#ff7d5f; --accent2:#80b2ff; --ok:#62d093; --hl:#3a3420;
+  --shadow:0 10px 28px -14px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; color:var(--ink); background-color:var(--bg);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;
+  font:16px/1.45 "Atkinson Hyperlegible",system-ui,sans-serif;
+}
+button,input{font:inherit;color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:28px 16px 90px}
+
+/* Kopf */
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;margin-bottom:18px}
+h1{font:700 clamp(38px,7vw,58px)/1 Kalam,cursive;margin:0;letter-spacing:-.5px}
+h1 span{color:var(--accent)}
+.tag{margin:6px 0 0;color:var(--muted);max-width:52ch}
+.who{display:flex;gap:8px;flex-wrap:wrap}
+.who label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.who input{border:0;border-bottom:2px solid var(--line);background:transparent;padding:4px 2px;font:400 22px Kalam,cursive;width:150px;outline:none}
+.who input.k{width:70px}
+.who input:focus{border-color:var(--accent2)}
+
+/* Suche */
+.search{position:relative;z-index:30}
+.search label.big{display:block;font:700 22px Kalam,cursive;margin:0 0 4px 2px}
+.inbox{position:relative}
+.inbox svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:24px;height:24px;stroke:var(--muted)}
+#q{width:100%;font-size:20px;padding:16px 18px 16px 52px;border:2px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:var(--shadow);outline:none}
+#q:focus{border-color:var(--accent2);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent2) 22%,transparent),var(--shadow)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.chips button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:4px 11px;font-size:14px;cursor:pointer;color:var(--muted)}
+.chips button:hover{border-color:var(--accent2);color:var(--ink)}
+.chips b{font-weight:400;color:var(--muted);font-size:13px;align-self:center;margin-right:2px}
+
+#sugg{position:absolute;left:0;right:0;top:calc(100% + 8px);background:var(--card);border:2px solid var(--ink);border-radius:14px;box-shadow:var(--shadow);display:none;grid-template-columns:1fr 300px;overflow:hidden;max-height:min(74vh,640px)}
+#sugg.open{display:grid}
+#sugg ul{list-style:none;margin:0;padding:6px;overflow:auto}
+.sug{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;padding:10px;border-radius:10px;cursor:pointer}
+.sug+.sug{margin-top:2px}
+.sug[aria-selected="true"]{background:var(--hl)}
+.sug .t{font-weight:700}
+.sug .s{color:var(--muted);font-size:14px}
+.sug .plus{font:700 15px Kalam,cursive;color:var(--accent2);white-space:nowrap}
+.sug .qn{display:inline-block;background:var(--accent);color:var(--card);border-radius:6px;padding:0 6px;margin-right:6px;font-size:13px}
+.hint{padding:12px 14px;color:var(--muted);font-size:14px;border-top:1px dashed var(--line)}
+.hint code{background:var(--bg);padding:1px 5px;border-radius:5px}
+#sugg aside{border-left:1px dashed var(--line);padding:16px;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;background:color-mix(in srgb,var(--bg) 55%,var(--card));text-align:center}
+#sugg aside .pt{font:700 20px Kalam,cursive;line-height:1.15}
+#sugg aside .ps{font-size:14px;color:var(--muted)}
+@media (max-width:760px){#sugg{grid-template-columns:1fr}#sugg aside{display:none}}
+
+/* Visualisierungen */
+.vis{display:flex;align-items:center;gap:6px;flex:none}
+.pg{display:block;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28));overflow:visible}
+.pg .paper{fill:#fff;stroke:#cdc6b5;stroke-width:.6px;vector-effect:non-scaling-stroke}
+.pg line,.pg path{vector-effect:non-scaling-stroke}
+.pg .l{stroke:#86aed3;stroke-width:.55px}
+.pg .lb{stroke:#5d8fbf;stroke-width:.9px}
+.pg .r{stroke:#e0705d;stroke-width:.8px}
+.pg .band{fill:#dff0cf}
+.pg .mmf{stroke:#f2bc94;stroke-width:.25px}
+.pg .mmm{stroke:#e9995f;stroke-width:.5px}
+.pg .mmb{stroke:#d9773c;stroke-width:.9px}
+.pg .dot{fill:#7f9fbf}
+.pg .hole{fill:var(--bg);stroke:#cdc6b5;stroke-width:.6px;vector-effect:non-scaling-stroke}
+.pg .unk{fill:#cfc6b0;font:700 120px Kalam,cursive}
+.pg .glue{fill:#2b3442}
+.pg.zoom{overflow:hidden;filter:none;border-radius:8px;border:1.5px solid #b9b19e;background:#fff}
+.pg.zoom .l{stroke-width:1.2px}.pg.zoom .lb{stroke-width:1.8px}.pg.zoom .r{stroke-width:1.6px}
+.pg.zoom .mmf{stroke-width:.6px}.pg.zoom .mmm{stroke-width:1px}.pg.zoom .mmb{stroke-width:1.6px}
+.zw{position:relative;line-height:0}
+.zw::after{content:"";position:absolute;right:-5px;bottom:-5px;width:16px;height:16px;border-radius:50%;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6a79' stroke-width='3' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='6'/%3E%3Cpath d='M15 15l6 6'/%3E%3C/svg%3E") center/11px no-repeat;border:1px solid var(--line)}
+.fw{position:relative;line-height:0}
+.fmtb{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);background:var(--ink);color:var(--card);font:700 10px/1 "Atkinson Hyperlegible",sans-serif;padding:2px 5px;border-radius:4px;letter-spacing:.03em;white-space:nowrap}
+.ico{display:block;flex:none}
+.emo{display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--bg) 70%,var(--card));border:1px solid var(--line);flex:none}
+
+/* Liste */
+.sheet{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.sheet::before{content:"";position:absolute;top:0;bottom:0;left:44px;width:2px;background:color-mix(in srgb,var(--accent) 55%,transparent)}
+.shead{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:16px 18px 12px 62px;border-bottom:1px solid var(--line)}
+.shead h2{font:700 26px Kalam,cursive;margin:0}
+.prog{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:14px}
+.bar{width:120px;height:8px;border-radius:9px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.tools button{border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 11px;font-size:14px;cursor:pointer}
+.tools button:hover{border-color:var(--ink)}
+.tools button.warn{color:var(--accent)}
+.grp{padding:6px 0 4px}
+.grp h3{margin:12px 18px 4px 62px;font:700 15px "Atkinson Hyperlegible",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.grp ul{list-style:none;margin:0;padding:0}
+.row{display:grid;grid-template-columns:44px 112px 1fr auto 40px;grid-template-areas:"chk vis txt qty del";align-items:center;gap:10px;padding:10px 12px 10px 0;border-top:1px dashed var(--line)}
+.row:first-child{border-top:0}
+.chk{grid-area:chk;display:grid;place-items:center;cursor:pointer}
+.chk input{position:absolute;opacity:0;width:1px;height:1px}
+.chk span{width:24px;height:24px;border:2px solid var(--ink);border-radius:6px;display:grid;place-items:center;background:var(--card);transition:.15s}
+.chk input:checked+span{background:var(--ok);border-color:var(--ok)}
+.chk input:checked+span::after{content:"";width:7px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.chk input:focus-visible+span{outline:3px solid var(--accent2);outline-offset:2px}
+.rvis{grid-area:vis;display:flex;justify-content:center;overflow:hidden}
+.rvis .ico,.sug .ico{max-width:108px;height:auto}
+.rtxt{grid-area:txt;min-width:0}
+.rt{font-weight:700}
+.rs{font-size:14px;color:var(--muted)}
+.note{width:100%;max-width:340px;border:0;border-bottom:1px dashed transparent;background:transparent;font:400 17px Kalam,cursive;color:var(--accent2);padding:0;margin-top:2px;outline:none}
+.note:hover,.note:focus{border-bottom-color:var(--line)}
+.note::placeholder{color:var(--muted);opacity:.8}
+.qty{grid-area:qty;display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.qty button{border:0;background:transparent;width:32px;height:32px;cursor:pointer;font-size:18px}
+.qty button:hover{background:var(--hl)}
+.qty span{min-width:30px;text-align:center;font-weight:700}
+.del{grid-area:del;border:0;background:transparent;width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:20px;color:var(--muted)}
+.del:hover{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
+.row.done .rt,.row.done .rs{text-decoration:line-through;text-decoration-color:var(--ok);opacity:.55}
+.row.done .rvis{opacity:.45}
+.row.flash{animation:fl 1.2s}
+@keyframes fl{0%{background:var(--hl)}100%{background:transparent}}
+.empty{padding:34px 18px 38px 62px;color:var(--muted)}
+.empty b{display:block;font:700 24px Kalam,cursive;color:var(--ink);margin-bottom:4px}
+@media (max-width:620px){
+  .sheet::before{left:34px}
+  .shead,.grp h3,.empty{padding-left:46px;margin-left:46px}
+  .shead{margin-left:0}
+  .grp h3{padding-left:0}
+  .row{grid-template-columns:34px 84px 1fr;grid-template-areas:"chk vis txt" "chk vis qtydel";padding-right:10px}
+  .qty{grid-area:qtydel;justify-self:start}
+  .del{grid-area:qtydel;justify-self:end}
+}
+
+/* Lineatur-Übersicht */
+details.lex{margin-top:26px;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+details.lex summary{cursor:pointer;padding:16px 18px;font:700 22px Kalam,cursive;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.lex summary::-webkit-details-marker{display:none}
+details.lex summary::after{content:"＋";font-size:22px;color:var(--muted)}
+details.lex[open] summary::after{content:"－"}
+.lexnote{margin:-6px 18px 12px;color:var(--muted);font-size:14px}
+.lexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:0 14px 16px}
+.lexgrid button{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:12px;background:transparent;padding:10px;cursor:pointer}
+.lexgrid button:hover{border-color:var(--accent2);background:var(--hl)}
+.lexgrid .n{font:700 20px Kalam,cursive;line-height:1}
+.lexgrid .d{font-size:13px;color:var(--muted);line-height:1.3}
+footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
+footer a{color:inherit}
+.printqr{display:none}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--card);padding:10px 16px;border-radius:10px;transition:.25s;pointer-events:none;z-index:50;font-size:15px}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
+@media print{
+  :root,:root:not([data-theme="light"]),:root[data-theme="dark"]{
+    --bg:#ffffff; --grid:#ffffff; --ink:#1f2a37; --muted:#4f5a68; --card:#ffffff;
+    --line:#d6cfbd; --accent:#bf3a20; --accent2:#2563a8; --ok:#2f8f5b; --hl:#ffffff;
+  }
+  body{background:#fff;color:#000}
+  .search,.tools,details.lex,footer,.del,.qty button,.toast{display:none!important}
+  .sheet{box-shadow:none;border:0}
+  .row{break-inside:avoid}
+  .note:placeholder-shown{display:none}
+  .wrap{padding-top:0}
+  .printqr{display:flex;align-items:center;gap:12px;font-size:12px;color:#333;margin-left:auto}
+  .printqr .qr{width:2.4cm;height:2.4cm;flex:none}
+  .tag,.prog{display:none!important}
+  header{align-items:center;margin-bottom:10px}
+  h1{font-size:40px}
+  .sheet{background:#fff!important}
+  .row{padding-top:5px;padding-bottom:5px}
+  .grp h3{margin-top:8px;break-after:avoid}
+  .row.flash{animation:none}
+  .who input:placeholder-shown::placeholder{color:transparent}
+  .printqr b{display:block;font:700 18px Kalam,cursive;color:#000}
+  .printqr .url{font-weight:700;color:#000}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Schul<span>kram</span></h1>
+      <p class="tag">Einfach lostippen, was auf der Liste der Schule steht. Hefte siehst du mit ihrer Lineatur, Stifte und Mappen in Farbe.</p>
+    </div>
+    <div class="who">
+      <label>Für<input id="name" placeholder="Name" autocomplete="off"></label>
+      <label>Klasse<input id="klasse" class="k" placeholder="3b" autocomplete="off"></label>
+    </div>
+    <div class="printqr">
+      <svg class="qr" viewBox="-4 -4 37 37" role="img" aria-label="QR-Code: github.com/mkrgr/schulkram"><rect x="-4" y="-4" width="37" height="37" fill="#fff"/><path stroke="#000" shape-rendering="crispEdges" d="M0 0.5h7m2 0h2m2 0h3m1 0h2m3 0h7m-29 1h1m5 0h1m1 0h5m2 0h1m1 0h1m4 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h1m1 0h1m2 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h4m4 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m4 0h5m3 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m5 0h3m2 0h2m1 0h1m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h4m1 0h1m4 0h2m-20 1h1m5 0h1m1 0h1m5 0h2m1 0h3m1 0h2m2 0h3m-28 1h1m1 0h4m1 0h3m2 0h1m1 0h1m1 0h4m1 0h1m1 0h2m1 0h2m-25 1h8m1 0h1m2 0h3m2 0h1m3 0h1m-25 1h2m2 0h2m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m3 0h2m3 0h1m-25 1h2m2 0h5m3 0h2m1 0h1m3 0h1m1 0h2m4 0h1m-29 1h1m1 0h2m1 0h1m1 0h2m1 0h7m2 0h2m1 0h3m2 0h2m-28 1h1m1 0h5m1 0h1m1 0h1m1 0h6m1 0h2m2 0h3m-26 1h1m2 0h2m1 0h2m1 0h1m2 0h2m1 0h1m2 0h1m3 0h2m1 0h1m1 0h1m-26 1h2m1 0h1m1 0h2m1 0h1m2 0h2m1 0h1m1 0h1m1 0h1m1 0h1m1 0h2m-27 1h3m2 0h1m1 0h1m1 0h3m3 0h2m1 0h2m2 0h3m1 0h3m-29 1h5m1 0h1m2 0h2m2 0h4m1 0h2m4 0h2m2 0h1m-29 1h1m3 0h1m3 0h1m1 0h1m3 0h2m4 0h1m1 0h1m-23 1h1m1 0h2m2 0h3m1 0h1m1 0h1m2 0h3m1 0h6m1 0h3m-21 1h2m3 0h1m1 0h1m1 0h2m1 0h1m3 0h2m-26 1h7m4 0h6m1 0h3m1 0h1m1 0h3m-27 1h1m5 0h1m4 0h3m1 0h1m2 0h3m3 0h1m3 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m3 0h1m2 0h1m2 0h7m1 0h2m-29 1h1m1 0h3m1 0h1m2 0h3m1 0h1m1 0h2m2 0h3m3 0h2m1 0h1m-29 1h1m1 0h3m1 0h1m3 0h3m2 0h1m3 0h9m-28 1h1m5 0h1m2 0h1m1 0h3m8 0h2m1 0h2m1 0h1m-29 1h7m1 0h1m1 0h4m3 0h1m1 0h1m2 0h3m1 0h1"/></svg>
+      <div><b>Schulkram</b>Diese Liste online erstellen:<br><span class="url">github.com/mkrgr/schulkram</span></div>
+    </div>
+  </header>
+
+  <div class="search">
+    <label class="big" for="q">Was brauchst du?</label>
+    <div class="inbox">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+      <input id="q" type="text" autocomplete="off" spellcheck="false"
+        placeholder="z. B. A4 Heft Lineatur 26, Füller, 24er Buntstifte …"
+        role="combobox" aria-expanded="false" aria-controls="sugglist" aria-autocomplete="list">
+    </div>
+    <div id="sugg"><ul id="sugglist" role="listbox"></ul><aside id="prev" aria-hidden="true"></aside></div>
+    <div class="chips" id="chips"><b>Probier mal:</b></div>
+  </div>
+
+  <section class="sheet" aria-labelledby="lt">
+    <div class="shead">
+      <h2 id="lt">Einkaufsliste</h2>
+      <div class="prog"><span id="progtxt">0 von 0 besorgt</span><div class="bar"><i id="progbar"></i></div></div>
+      <div class="tools">
+        <button id="copy" type="button">Als Text kopieren</button>
+        <button id="print" type="button">Drucken</button>
+        <button id="clear" type="button" class="warn">Liste leeren</button>
+      </div>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <details class="lex" id="lex">
+    <summary>Lineaturen-Übersicht</summary>
+    <p class="lexnote">Antippen legt ein Heft mit dieser Lineatur auf die Liste. Die Nummern sind bei den meisten Herstellern gleich. Im Zweifel die Liste der Schule als Maßstab nehmen.</p>
+    <div class="lexgrid" id="lexgrid"></div>
+  </details>
+  <footer>Die Liste bleibt in diesem Browser gespeichert. · <a href="https://github.com/mkrgr/schulkram">github.com/mkrgr/schulkram</a></footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => s.toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss");
+const r1 = n => Math.round(n*100)/100;
+
+/* ---------- Daten ---------- */
+const FMT = {A2:[420,594],A3:[297,420],A4:[210,297],A5:[148,210],A6:[105,148],A7:[74,105],A8:[52,74]};
+const UP = [5,6,7,8,9,10,11,12,13];
+const LIN = [
+  {id:"1", fmt:"A5", t:"schreib", z:[5,5,5], g:5, kl:[1], kls:"Klasse 1", d:"4 Linien pro Zeile, farbiges Mittelband (5 mm)"},
+  {id:"2", fmt:"A4", t:"schreib", z:[4,4,4], g:4, kl:[2], kls:"Klasse 2", d:"4 Linien pro Zeile, farbiges Mittelband (4 mm)"},
+  {id:"3", fmt:"A4", t:"schreib3", band:3.5, row:9, kl:[3], kls:"Klasse 3", d:"2 Linien pro Zeile, Mittelband 3,5 mm"},
+  {id:"4", fmt:"A5", t:"liniert", mm:10, rand:"none", kl:[4], kls:"Klasse 4", d:"liniert 10 mm, ohne Rand"},
+  {id:"5", fmt:"A5", t:"kariert", mm:5, rand:"none", kl:[2,3,4], kls:"ab Klasse 2", d:"kariert 5 mm, ohne Rand"},
+  {id:"6", fmt:"A5", t:"blanko", rand:"none", kl:[1,2,3,4], kls:"Grundschule", d:"blanko (unliniert)"},
+  {id:"7", fmt:"A4", t:"kariert", mm:7, rand:"none", kl:[1,2], kls:"Klasse 1–2", d:"kariert, große Kästchen 7 mm"},
+  {id:"9", fmt:"A5", t:"liniert", mm:10, rand:"links", kl:[4,5,6], kls:"ab Klasse 4", d:"liniert 10 mm, mit Rand"},
+  {id:"10",fmt:"A5", t:"kariert", mm:5, rand:"links", kl:[2,3,4,5,6], kls:"Grundschule", d:"kariert 5 mm, mit Rand"},
+  {id:"14",fmt:"A4", t:"noten", rand:"none", kl:[], kls:"Musik", d:"Notenlinien"},
+  {id:"20",fmt:"A4", t:"blanko", rand:"none", kl:UP, kls:"", d:"blanko (unliniert), ohne Rand"},
+  {id:"21",fmt:"A4", t:"liniert", mm:9, rand:"none", kl:UP, kls:"ab Klasse 5", d:"liniert 9 mm, ohne Rand"},
+  {id:"22",fmt:"A4", t:"kariert", mm:5, rand:"none", kl:UP, kls:"ab Klasse 5", d:"kariert 5 mm, ohne Rand"},
+  {id:"23",fmt:"A4", t:"rautiert", cw:5, ch:7, rand:"none", kl:UP, kls:"", d:"rautiert 5 × 7 mm, ohne Rand"},
+  {id:"25",fmt:"A4", t:"liniert", mm:9, rand:"links", kl:UP, kls:"ab Klasse 5", d:"liniert 9 mm, mit Rand"},
+  {id:"26",fmt:"A4", t:"kariert", mm:5, rand:"links", kl:UP, kls:"ab Klasse 5", d:"kariert 5 mm, mit Rand"},
+  {id:"27",fmt:"A4", t:"liniert", mm:9, rand:"doppel", kl:UP, kls:"ab Klasse 5", d:"liniert 9 mm, Rand links und rechts"},
+  {id:"28",fmt:"A4", t:"kariert", mm:5, rand:"doppel", kl:UP, kls:"ab Klasse 5", d:"kariert 5 mm, Rand links und rechts"},
+  {id:"29",fmt:"A4", t:"rautiert", cw:5, ch:7, rand:"doppel", kl:UP, kls:"", d:"rautiert 5 × 7 mm, Rand links und rechts"},
+  {id:"53",fmt:"A5", t:"spalten", mm:9, cols:2, rand:"none", kl:[3,4,...UP], kls:"Vokabeln", d:"liniert, 2 Spalten"},
+  {id:"54",fmt:"A5", t:"spalten", mm:9, cols:3, rand:"none", kl:[3,4,...UP], kls:"Vokabeln", d:"liniert, 3 Spalten"},
+];
+const getLin = id => LIN.find(l => l.id === String(id).toUpperCase());
+const SPECIAL_LIN = ["14","53","54"];
+
+const COLORS = {
+  transparent:["transparent","transparent"], rot:["#d93a2b","rot"], blau:["#1f5fbf","blau"], hellblau:["#5aa9e6","hellblau"],
+  dunkelblau:["#1b3a78","dunkelblau"], koenigsblau:["#2c49c9","königsblau"], gruen:["#2e9a4f","grün"], hellgruen:["#8fcf5a","hellgrün"],
+  dunkelgruen:["#1f6b3a","dunkelgrün"], gelb:["#f5c518","gelb"], orange:["#f08a24","orange"], lila:["#7c4bc4","lila"],
+  violett:["#7c4bc4","violett"], rosa:["#f29ac0","rosa"], pink:["#e83e8c","pink"], schwarz:["#24272d","schwarz"],
+  weiss:["#f7f7f4","weiß"], grau:["#8a9099","grau"], braun:["#8a5a34","braun"], tuerkis:["#1fb5b0","türkis"],
+};
+const COLOR_ALIAS = {farblos:"transparent",durchsichtig:"transparent",klar:"transparent",violet:"violett",royalblau:"koenigsblau"};
+
+const CATS = [
+  ["papier","Hefte & Papier"],["schreiben","Schreiben"],["mathe","Mathe & Geometrie"],
+  ["kunst","Kunst & Basteln"],["ordnen","Ordnen & Mappen"],["tasche","Tasche & Sport"],["eigen","Sonstiges"],
+];
+
+const ITEMS = [
+  // Hefte & Papier
+  {id:"heft", n:"Heft", cat:"papier", kind:"heft", syn:["heft","hefte","schulheft","schreibheft","rechenheft","matheheft","deutschheft","heftchen"]},
+  {id:"collegeblock", n:"Collegeblock", cat:"papier", kind:"heft", holes:true, lins:["27","28","25","26","21","22"], syn:["collegeblock","block","bloecke","schreibblock","collegebloecke","notizblock"]},
+  {id:"vokabelheft", n:"Vokabelheft", cat:"papier", kind:"heft", lins:["53","54"], syn:["vokabelheft","vokabel","vokabeln","vokabelhefte"]},
+  {id:"notenheft", n:"Notenheft", cat:"papier", kind:"heft", lins:["14"], syn:["notenheft","noten","musikheft","notenhefte"]},
+  {id:"umschlag", n:"Heftumschlag", cat:"papier", kind:"color", shape:"cover", colors:["transparent","rot","blau","gruen","gelb"], syn:["umschlag","umschlaege","heftumschlag","heftumschlaege","hefthuelle","schutzumschlag","heftschoner"]},
+  {id:"hausaufgabenheft", n:"Hausaufgabenheft", cat:"papier", kind:"emo", emo:"📓", note:"oft gibt die Schule ein eigenes Heft aus", syn:["hausaufgabenheft","hausaufgaben","schulplaner","planer","aufgabenheft","hausheft"]},
+  {id:"karteikarten", n:"Karteikarten", cat:"papier", kind:"karte", syn:["karteikarten","karteikarte","lernkarten","vokabelkarten","karten"]},
+  {id:"mmpapier", n:"Millimeterpapier", cat:"papier", kind:"mm", syn:["millimeterpapier","millimeter","mmpapier"]},
+  // Schreiben
+  {id:"fueller", n:"Füller", cat:"schreiben", kind:"emo", emo:"🖋️", note:"für Linkshänder gibt es eigene Modelle", syn:["fueller","fuellhalter","patronenfueller","fuellfederhalter","fuellern"]},
+  {id:"patronen", n:"Tintenpatronen", cat:"schreiben", kind:"color", shape:"patrone", colors:["koenigsblau","schwarz"], note:"Standardgröße, passend zum Füller", syn:["patronen","tintenpatronen","tinte","patrone"]},
+  {id:"tintenkiller", n:"Tintenlöscher", cat:"schreiben", kind:"icon", icon:"killer", syn:["tintenkiller","tintenloescher","killer","tintenradierer"]},
+  {id:"bleistift", n:"Bleistift", cat:"schreiben", kind:"pencil", syn:["bleistift","bleistifte","bleier"]},
+  {id:"radierer", n:"Radiergummi", cat:"schreiben", kind:"icon", icon:"radierer", syn:["radiergummi","radierer","radiergummis","radi"]},
+  {id:"spitzer", n:"Dosenspitzer", cat:"schreiben", kind:"icon", icon:"spitzer", note:"mit Auffangbehälter", syn:["spitzer","anspitzer","dosenspitzer","bleistiftspitzer"]},
+  {id:"buntstifte", n:"Buntstifte", cat:"schreiben", kind:"set", style:"stift", counts:[12,24], syn:["buntstifte","buntstift","farbstifte","malstifte"]},
+  {id:"filzstifte", n:"Filzstifte", cat:"schreiben", kind:"set", style:"filz", counts:[12,24], syn:["filzstifte","filzstift","filzer","fasermaler","filzis"]},
+  {id:"fineliner", n:"Fineliner", cat:"schreiben", kind:"set", style:"fine", counts:[6,10], syn:["fineliner","feinliner"]},
+  {id:"textmarker", n:"Textmarker", cat:"schreiben", kind:"set", style:"marker", counts:[4,6], syn:["textmarker","marker","leuchtstift","leuchtstifte","highlighter"]},
+  {id:"kuli", n:"Kugelschreiber", cat:"schreiben", kind:"color", shape:"kuli", colors:["blau","rot","gruen","schwarz"], syn:["kugelschreiber","kuli","kulis","tintenroller","gelstift","roller"]},
+  {id:"folienstift", n:"Folienstift", cat:"schreiben", kind:"color", shape:"kuli", colors:["schwarz","blau","rot"], note:"wasserlöslich, z. B. für Whiteboards", syn:["folienstift","folienstifte","whiteboardmarker"]},
+  // Mathe
+  {id:"geodreieck", n:"Geodreieck", cat:"mathe", kind:"icon", icon:"geo", note:"16 cm, gern mit Griff", syn:["geodreieck","geo","dreieck","geodreiecke"]},
+  {id:"lineal", n:"Lineal", cat:"mathe", kind:"ruler", syn:["lineal","lineale","massstab"]},
+  {id:"zirkel", n:"Zirkel", cat:"mathe", kind:"icon", icon:"zirkel", note:"mit Mittelrad zum Einstellen", syn:["zirkel","schulzirkel"]},
+  {id:"taschenrechner", n:"Taschenrechner", cat:"mathe", kind:"icon", icon:"rechner", note:"Modell vorher mit der Lehrkraft abklären", syn:["taschenrechner","rechner","schulrechner"]},
+  // Kunst
+  {id:"tuschkasten", n:"Deckfarbkasten", cat:"kunst", kind:"set", style:"kasten", counts:[12,24], note:"mit Deckweiß", syn:["tuschkasten","deckfarbkasten","malkasten","wasserfarben","farbkasten","deckfarben","tusche"]},
+  {id:"pinsel", n:"Pinsel", cat:"kunst", kind:"set", style:"pinsel", counts:[3,5], note:"Haar- und Borstenpinsel, verschiedene Größen", syn:["pinsel","haarpinsel","borstenpinsel"]},
+  {id:"wasserbecher", n:"Wasserbecher", cat:"kunst", kind:"emo", emo:"🥤", note:"standfest, faltbar ist praktisch", syn:["wasserbecher","malbecher","becher"]},
+  {id:"malkittel", n:"Malkittel", cat:"kunst", kind:"emo", emo:"👕", note:"ein altes Hemd geht auch", syn:["malkittel","kittel","malschuerze","schuerze"]},
+  {id:"zeichenblock", n:"Zeichenblock", cat:"kunst", kind:"paper", fmts:["A3","A4","A2"], syn:["zeichenblock","malblock","zeichenpapier","malpapier","zeichenbloecke"]},
+  {id:"wachsmal", n:"Wachsmalstifte", cat:"kunst", kind:"set", style:"wachs", counts:[12,24], syn:["wachsmalstifte","wachsmalkreide","wachsmaler","wachskreide","oelkreide","wachsmalkreiden"]},
+  {id:"schere", n:"Schere", cat:"kunst", kind:"emo", emo:"✂️", note:"Kinderschere mit runder Spitze, Linkshänder-Variante beachten", syn:["schere","bastelschere","kinderschere"]},
+  {id:"klebestift", n:"Klebestift", cat:"kunst", kind:"icon", icon:"kleber", note:"lösungsmittelfrei", syn:["klebestift","klebstoff","kleber","prittstift","klebstift"]},
+  {id:"fluessigkleber", n:"Flüssigkleber", cat:"kunst", kind:"emo", emo:"🧴", syn:["fluessigkleber","alleskleber","bastelkleber","fluessigkleber"]},
+  {id:"knete", n:"Knete", cat:"kunst", kind:"set", style:"knete", counts:[6,10], syn:["knete","knetmasse","plastilin","knetgummi"]},
+  {id:"tonpapier", n:"Tonpapier", cat:"kunst", kind:"set", style:"papier", counts:[10,25], unit:"Blatt", syn:["tonpapier","tonkarton","fotokarton"]},
+  {id:"buntpapier", n:"Faltblätter", cat:"kunst", kind:"set", style:"papier", counts:[20,50], unit:"Blatt", syn:["buntpapier","faltblaetter","faltpapier","origami","glanzpapier"]},
+  // Ordnen
+  {id:"schnellhefter", n:"Schnellhefter", cat:"ordnen", kind:"color", shape:"folder", colors:["rot","blau","gruen","gelb"], syn:["schnellhefter","hefter","schnellheftern"]},
+  {id:"ordner", n:"Ordner", cat:"ordnen", kind:"color", shape:"binder", colors:["blau","rot","schwarz","gruen"], note:"Rückenbreite: schmal (4 cm) oder breit (8 cm)", syn:["ordner","aktenordner","ringordner","ringbuch"]},
+  {id:"sammelmappe", n:"Sammelmappe", cat:"ordnen", kind:"color", shape:"mappe", colors:["blau","rot","gruen","gelb"], note:"mit Gummizug", syn:["sammelmappe","mappe","eckspanner","postmappe","gummizugmappe","mappen"]},
+  {id:"heftbox", n:"Heftbox", cat:"ordnen", kind:"color", shape:"box", colors:["blau","rot","gruen","schwarz"], syn:["heftbox","sammelbox","box","heftboxen"]},
+  {id:"huellen", n:"Klarsichthüllen", cat:"ordnen", kind:"emo", emo:"📄", note:"A4, gelocht", syn:["klarsichthuellen","prospekthuellen","huellen","sichthuellen","klarsichtfolie"]},
+  {id:"register", n:"Trennblätter", cat:"ordnen", kind:"emo", emo:"🗂️", syn:["trennblaetter","register","trennstreifen"]},
+  // Tasche & Sport
+  {id:"federmappe", n:"Federmappe", cat:"tasche", kind:"emo", emo:"👝", syn:["federmappe","maeppchen","maeppi","etui","schlamperrolle","federtasche","stiftemappe"]},
+  {id:"ranzen", n:"Schulranzen", cat:"tasche", kind:"emo", emo:"🎒", syn:["schulranzen","ranzen","rucksack","schultasche","tornister"]},
+  {id:"turnbeutel", n:"Turnbeutel", cat:"tasche", kind:"emo", emo:"🎽", syn:["turnbeutel","sportbeutel","sportsachen","sportzeug"]},
+  {id:"hallenschuhe", n:"Hallenschuhe", cat:"tasche", kind:"emo", emo:"👟", note:"mit heller, abriebfester Sohle", syn:["hallenschuhe","turnschuhe","sportschuhe","schuhe"]},
+  {id:"hausschuhe", n:"Hausschuhe", cat:"tasche", kind:"emo", emo:"🩴", syn:["hausschuhe","puschen","schlappen"]},
+  {id:"trinkflasche", n:"Trinkflasche", cat:"tasche", kind:"emo", emo:"🍶", note:"auslaufsicher", syn:["trinkflasche","flasche","wasserflasche"]},
+  {id:"brotdose", n:"Brotdose", cat:"tasche", kind:"emo", emo:"🍱", syn:["brotdose","brotbox","lunchbox","vesperdose","pausenbox"]},
+  {id:"kopfhoerer", n:"Kopfhörer", cat:"tasche", kind:"emo", emo:"🎧", syn:["kopfhoerer","headset"]},
+  {id:"usb", n:"USB-Stick", cat:"tasche", kind:"emo", emo:"💾", syn:["usb","stick","usbstick","speicherstick"]},
+];
+ITEMS.forEach(it => it.nsyn = it.syn.map(norm));
+const itemById = id => ITEMS.find(i => i.id === id);
+
+const POPULAR = {
+  any:["26","25","27","28","22","21","5","9"],
+  A4:["26","25","27","28","22","21","20","7"],
+  A5:["5","10","4","9","6","1"],
+};
+const PAL = ["#e53935","#fb8c00","#fdd835","#7cb342","#2e7d32","#00acc1","#1e88e5","#283593","#8e24aa","#ec407a","#6d4c41","#212121",
+             "#f4511e","#ffb300","#c0ca33","#43a047","#26a69a","#4fc3f7","#3949ab","#ba68c8","#f48fb1","#a1887f","#9e9e9e","#fafafa"];
+const NEON = ["#ffe600","#7dff3c","#ff4fa3","#ff9f1c","#3cd2ff","#c77dff"];
+
+/* ---------- Zeichnen: Lineatur ---------- */
+function geom(p,w,h){
+  const rand = p.rand || "none";
+  return {rand, x0: rand==="none" ? 0 : Math.min(20, w*.13), x1: rand==="doppel" ? w - Math.min(15, w*.09) : w,
+          top: Math.min(14, h*.07), bot: Math.min(10, h*.05)};
+}
+function drawPattern(p,w,h,g){
+  let o = "";
+  const L = (x1,y1,x2,y2,c="l") => `<line class="${c}" x1="${r1(x1)}" y1="${r1(y1)}" x2="${r1(x2)}" y2="${r1(y2)}"/>`;
+  const lx0 = g.rand==="none" ? 0 : g.x0, lx1 = g.x1;
+  const grid = (cw,ch) => {
+    const pad = Math.min(5, w*.05);
+    const gx0 = g.rand==="none" ? pad : g.x0, gx1raw = g.rand==="doppel" ? g.x1 : w-pad;
+    const nx = Math.floor((gx1raw-gx0)/cw), ny = Math.floor((h-2*pad)/ch);
+    const gx1 = gx0+nx*cw, gy0 = pad, gy1 = pad+ny*ch;
+    for(let i=0;i<=nx;i++) o += L(gx0+i*cw, gy0, gx0+i*cw, gy1);
+    for(let j=0;j<=ny;j++) o += L(gx0, gy0+j*ch, gx1, gy0+j*ch);
+  };
+  switch(p.t){
+    case "liniert": case "spalten": {
+      for(let y=g.top+p.mm; y<=h-g.bot; y+=p.mm) o += L(lx0,y,lx1,y);
+      if(p.kopf) o += L(0, g.top+p.mm, w, g.top+p.mm, "r");
+      if(p.t==="spalten") for(let i=1;i<p.cols;i++) o += L(w*i/p.cols, g.top, w*i/p.cols, h-g.bot+2, "lb");
+      break;
+    }
+    case "kariert": grid(p.mm,p.mm); break;
+    case "rautiert": grid(p.cw,p.ch); break;
+    case "schreib": {
+      const [a,b,c] = p.z, sum = a+b+c;
+      for(let y=g.top; y+sum<=h-g.bot; y+=sum+p.g){
+        o += `<rect class="band" x="${lx0}" y="${r1(y+a)}" width="${r1(lx1-lx0)}" height="${b}"/>`;
+        o += L(lx0,y,lx1,y) + L(lx0,y+a,lx1,y+a,"lb") + L(lx0,y+a+b,lx1,y+a+b,"lb") + L(lx0,y+sum,lx1,y+sum);
+      }
+      break;
+    }
+    case "schreib3": {
+      for(let y=g.top+(p.row-p.band)/2; y+p.band<=h-g.bot; y+=p.row){
+        o += `<rect class="band" x="${lx0}" y="${r1(y)}" width="${r1(lx1-lx0)}" height="${p.band}"/>`;
+        o += L(lx0,y,lx1,y,"lb") + L(lx0,y+p.band,lx1,y+p.band,"lb");
+      }
+      break;
+    }
+    case "noten": {
+      for(let y=g.top+6; y+8<=h-g.bot; y+=17) for(let i=0;i<5;i++) o += L(8,y+i*2,w-8,y+i*2,"lb");
+      break;
+    }
+    case "mm": {
+      const pad = 10, nx = Math.floor((w-2*pad)), ny = Math.floor((h-2*pad));
+      const cls = i => i%10===0 ? "mmb" : i%5===0 ? "mmm" : "mmf";
+      for(let i=0;i<=nx;i++) o += L(pad+i, pad, pad+i, pad+ny, cls(i));
+      for(let j=0;j<=ny;j++) o += L(pad, pad+j, pad+nx, pad+j, cls(j));
+      break;
+    }
+    case "unknown": o += `<text class="unk" x="${w/2}" y="${h*.58}" text-anchor="middle" font-size="${w*.5}">?</text>`; break;
+  }
+  if(g.rand!=="none") o += L(g.x0,0,g.x0,h,"r");
+  if(g.rand==="doppel") o += L(g.x1,0,g.x1,h,"r");
+  if(p.holes){ const c=h/2; [-120,-40,40,120].forEach(d => { if(c+d>4 && c+d<h-4) o += `<circle class="hole" cx="7" cy="${c+d}" r="2.7"/>`; }); }
+  if(p.glue) o += `<rect class="glue" x="0" y="0" width="${w}" height="${h*.035}" rx="${w*.012}"/>`;
+  return o;
+}
+function pageData(pat, fmt, quer){
+  let [w,h] = FMT[fmt] || FMT.A4; if(quer) [w,h] = [h,w];
+  const g = geom(pat,w,h);
+  return {w,h,g,inner:drawPattern(pat,w,h,g)};
+}
+function svgPage(pd, H){
+  const W = Math.round(H*pd.w/pd.h);
+  return `<svg class="pg" viewBox="0 0 ${pd.w} ${pd.h}" width="${W}" height="${H}" aria-hidden="true"><rect class="paper" width="${pd.w}" height="${pd.h}" rx="${r1(pd.w*.015)}"/>${pd.inner}</svg>`;
+}
+function svgZoom(pd, W, H){
+  const zw = Math.min(pd.w, 54), zh = zw*H/W;
+  const zx = pd.g.rand==="none" ? 0 : Math.max(0, pd.g.x0-15);
+  const zy = Math.max(0, Math.min(pd.g.top-3, pd.h-zh));
+  return `<svg class="pg zoom" viewBox="${r1(zx)} ${r1(zy)} ${r1(zw)} ${r1(zh)}" width="${W}" height="${H}" preserveAspectRatio="xMinYMin slice" aria-hidden="true"><rect class="paper" x="-5" y="-5" width="${pd.w+10}" height="${pd.h+10}"/>${pd.inner}</svg>`;
+}
+function pageVis(pat, fmt, quer, size){
+  const pd = pageData(pat, fmt, quer);
+  const H = size==="lg" ? 190 : size==="md" ? 84 : 58;
+  const zW = size==="lg" ? 240 : size==="md" ? 100 : 66, zH = size==="lg" ? 140 : size==="md" ? 84 : 58;
+  const zoom = pat.t==="blanko" || pat.t==="unknown" ? "" : `<div class="zw">${svgZoom(pd,zW,zH)}</div>`;
+  return `<div class="vis" style="${size==="lg"?"gap:14px;flex-direction:column":""}"><div class="fw">${svgPage(pd,H)}<span class="fmtb">${esc(fmt)}${quer?" quer":""}</span></div>${zoom}</div>`;
+}
+
+/* ---------- Zeichnen: Dinge ---------- */
+function shade(hex, amt){
+  if(!hex || hex[0]!=="#") return hex;
+  const n = parseInt(hex.slice(1),16), cl = v => Math.max(0,Math.min(255,v));
+  const r = cl((n>>16)+amt), g = cl(((n>>8)&255)+amt), b = cl((n&255)+amt);
+  return "#"+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);
+}
+function colorSVG(shape, key, H){
+  const tr = key==="transparent", c = tr ? "#cfe0ee" : (COLORS[key]||COLORS.blau)[0];
+  const d = tr ? "#8fa9bd" : shade(c,-45), li = tr ? "#ffffff" : shade(c,55);
+  const op = tr ? .6 : 1, dash = tr ? `stroke-dasharray="3 2"` : "";
+  let body = "", vb = "0 0 60 76";
+  switch(shape){
+    case "cover":
+      body = `<rect x="9" y="3" width="46" height="68" rx="3" fill="#fff" stroke="#c9c2b0"/>
+        ${[16,24,32,40,48,56].map(y=>`<line x1="14" x2="50" y1="${y}" y2="${y}" stroke="#a9c3db" stroke-width=".8"/>`).join("")}
+        <rect x="4" y="6" width="48" height="68" rx="3" fill="${c}" fill-opacity="${tr?.45:.92}" stroke="${d}" stroke-width="1.5" ${dash}/>
+        <path d="M8 10 L26 10 L10 40 L8 40Z" fill="#fff" opacity=".28"/>`; break;
+    case "folder":
+      body = `<rect x="4" y="4" width="50" height="68" rx="3" fill="${c}" stroke="${d}" stroke-width="1.5" opacity="${op}"/>
+        <rect x="8" y="8" width="46" height="64" rx="2" fill="#fff" opacity=".55"/>
+        <rect x="11" y="16" width="5" height="40" rx="1.5" fill="#b9bec6" stroke="#8d939c"/>
+        <rect x="22" y="12" width="26" height="9" rx="1.5" fill="#fff" stroke="${d}"/>
+        <line x1="25" x2="44" y1="16.5" y2="16.5" stroke="${d}" stroke-width=".8"/>`; break;
+    case "binder":
+      body = `<rect x="10" y="2" width="40" height="72" rx="3" fill="${c}" stroke="${d}" stroke-width="1.5"/>
+        <rect x="17" y="10" width="26" height="34" rx="2" fill="#fff" stroke="${d}"/>
+        ${[17,23,29].map(y=>`<line x1="21" x2="39" y1="${y}" y2="${y}" stroke="#c7c0ae"/>`).join("")}
+        <circle cx="30" cy="59" r="6.5" fill="${d}"/><circle cx="30" cy="59" r="4" fill="var(--card)"/>`; break;
+    case "mappe":
+      body = `<rect x="3" y="8" width="54" height="62" rx="3" fill="${c}" stroke="${d}" stroke-width="1.5" opacity="${op}"/>
+        <path d="M3 18 H57" stroke="${d}" stroke-width="1"/><rect x="3" y="8" width="54" height="10" rx="3" fill="${li}" opacity=".5"/>
+        <path d="M4 58 L16 70 M44 70 L56 58" stroke="#20242a" stroke-width="3" stroke-linecap="round"/>`; break;
+    case "box":
+      body = `<path d="M6 20 L22 8 L56 8 L40 20Z" fill="${li}" stroke="${d}" stroke-width="1.2"/>
+        <path d="M40 20 L56 8 L56 60 L40 72Z" fill="${d}"/>
+        <rect x="6" y="20" width="34" height="52" fill="${c}" stroke="${d}" stroke-width="1.2"/>
+        <circle cx="23" cy="34" r="4" fill="#20242a" opacity=".55"/>`; break;
+    case "patrone":
+      vb = "0 0 76 60";
+      body = [0,1,2,3,4,5].map(i=>{const x=6+i*11;return `<rect x="${x}" y="8" width="8" height="40" rx="3.5" fill="#f4f6f8" stroke="#a7b0bb"/>
+        <rect x="${x}" y="8" width="8" height="10" rx="3.5" fill="${c}"/><rect x="${x+1.5}" y="22" width="5" height="22" rx="2" fill="${c}" opacity=".45"/>`}).join(""); break;
+    case "kuli":
+      vb = "0 0 100 30";
+      body = `<path d="M6 15 L16 10 L16 20Z" fill="#4c535c"/><circle cx="5" cy="15" r="1.4" fill="${c}"/>
+        <rect x="16" y="9" width="62" height="12" rx="3" fill="#eef1f4" stroke="#a7b0bb"/>
+        <rect x="16" y="9" width="16" height="12" rx="2" fill="${c}" opacity=".8"/>
+        <rect x="74" y="7" width="20" height="16" rx="4" fill="${c}"/><rect x="72" y="4" width="22" height="3.5" rx="1.5" fill="${d}"/>`; break;
+  }
+  const [,, vw, vh] = vb.split(" ").map(Number);
+  return `<svg class="ico" viewBox="${vb}" width="${Math.round(H*vw/vh)}" height="${H}" aria-hidden="true">${body}</svg>`;
+}
+function pencilSVG(hard, H){
+  const w = Math.round(H*2.6);
+  return `<svg class="ico" viewBox="0 0 130 50" width="${w}" height="${H}" aria-hidden="true">
+    <path d="M6 25 L28 14 L28 36Z" fill="#f1d2a2"/><path d="M6 25 L13 21.5 L13 28.5Z" fill="#3a3f46"/>
+    <rect x="28" y="14" width="80" height="22" fill="#f2c12e"/><rect x="28" y="14" width="80" height="7" fill="#f7d75e"/><rect x="28" y="29" width="80" height="7" fill="#d9a514"/>
+    <rect x="108" y="14" width="8" height="22" fill="#b8bec7"/><rect x="116" y="14" width="10" height="22" rx="3" fill="#f08aa2"/>
+    <text x="68" y="30" text-anchor="middle" font-family="Atkinson Hyperlegible,sans-serif" font-weight="700" font-size="13" fill="#3a2a05">${esc(hard)}</text></svg>`;
+}
+function rulerSVG(len, H){
+  const pxPerCm = 10, W = len*pxPerCm + 16;
+  let t = "";
+  for(let i=0;i<=len*2;i++){ const x = 8+i*pxPerCm/2, big = i%2===0; t += `<line x1="${x}" x2="${x}" y1="2" y2="${big?14:9}" stroke="#2a4a6a" stroke-width="${big?1:.7}"/>`;
+    if(big && (i/2)%5===0) t += `<text x="${x}" y="25" text-anchor="middle" font-size="9" font-family="Atkinson Hyperlegible,sans-serif" fill="#2a4a6a">${i/2}</text>`; }
+  const dispW = Math.round(H*1.0*(W/34));
+  return `<svg class="ico" viewBox="0 0 ${W} 34" width="${Math.min(dispW, H*5.6)}" height="${Math.round(Math.min(dispW, H*5.6)*34/W)}" aria-hidden="true">
+    <rect x="1" y="1" width="${W-2}" height="32" rx="3" fill="#dcefff" fill-opacity=".85" stroke="#7aa7cf"/>${t}</svg>`;
+}
+function setSVG(style, count, H){
+  let vb, body = "";
+  const n = count;
+  if(style==="stift" || style==="filz" || style==="fine" || style==="wachs"){
+    const cols = n<=12 ? PAL.slice(0,n) : PAL.slice(0,Math.min(n,24));
+    const step = style==="fine" ? 5 : 7, ww = style==="fine" ? 3.5 : 5.6, top = style==="wachs" ? 16 : 4;
+    vb = `0 0 ${cols.length*step+2} 50`;
+    cols.forEach((c,i)=>{ const x = 1+i*step, cx = x+ww/2;
+      if(style==="stift") body += `<path d="M${x} 14 L${cx} 3 L${x+ww} 14Z" fill="#f1d2a2"/><path d="M${cx-1.1} 5.8 L${cx} 3 L${cx+1.1} 5.8Z" fill="${c}"/><rect x="${x}" y="14" width="${ww}" height="34" fill="${c}" stroke="rgba(0,0,0,.18)" stroke-width=".5"/>`;
+      else if(style==="filz") body += `<rect x="${x}" y="4" width="${ww}" height="12" rx="2" fill="${c}"/><rect x="${x+.6}" y="16" width="${ww-1.2}" height="32" fill="#f3f4f6" stroke="#c4c9d0" stroke-width=".5"/><rect x="${x+.6}" y="40" width="${ww-1.2}" height="8" fill="${c}" opacity=".6"/>`;
+      else if(style==="fine") body += `<rect x="${x}" y="4" width="${ww}" height="14" rx="1.5" fill="${c}"/><rect x="${x}" y="18" width="${ww}" height="30" fill="#2b2f36"/><rect x="${x}" y="30" width="${ww}" height="3" fill="${c}"/>`;
+      else body += `<path d="M${x} 22 L${cx} ${top} L${x+ww} 22Z" fill="${c}"/><rect x="${x}" y="22" width="${ww}" height="26" rx="1" fill="${c}"/><rect x="${x}" y="27" width="${ww}" height="15" fill="#fff" opacity=".55"/>`;
+    });
+  } else if(style==="marker"){
+    const cols = NEON.slice(0,n); vb = `0 0 ${cols.length*12+2} 50`;
+    cols.forEach((c,i)=>{ const x=1+i*12; body += `<rect x="${x}" y="3" width="10" height="13" rx="2" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width=".5"/><rect x="${x}" y="16" width="10" height="32" rx="2" fill="#2d323a"/><rect x="${x+3}" y="22" width="4" height="20" rx="1" fill="${c}"/>`; });
+  } else if(style==="kasten"){
+    const per = Math.ceil(n/2), pw = 9, W = per*pw+10; vb = `0 0 ${W} 40`;
+    body += `<rect x="1" y="1" width="${W-2}" height="38" rx="3" fill="#2f3640"/><rect x="3" y="3" width="${W-6}" height="34" rx="2" fill="#e9edf1"/>`;
+    for(let i=0;i<n;i++){ const r=Math.floor(i/per), cI=i%per; body += `<ellipse cx="${7.5+cI*pw}" cy="${12+r*15}" rx="3.6" ry="5.4" fill="${PAL[i%24]}" stroke="rgba(0,0,0,.2)" stroke-width=".4"/>`; }
+  } else if(style==="papier"){
+    const k = Math.min(n, 8); vb = `0 0 ${50+k*5} 54`;
+    for(let i=0;i<k;i++) body += `<rect x="${2+i*5}" y="${2+i*2.4}" width="42" height="34" rx="1.5" fill="${PAL[(i*3)%12]}" stroke="rgba(0,0,0,.2)" stroke-width=".5"/>`;
+  } else if(style==="knete"){
+    const k = Math.min(n,10); vb = `0 0 ${k*13+4} 30`;
+    for(let i=0;i<k;i++) body += `<rect x="${3+i*13}" y="${i%2?9:4}" width="11" height="18" rx="5.5" fill="${PAL[(i*2)%12]}"/><rect x="${5+i*13}" y="${i%2?11:6}" width="3" height="7" rx="1.5" fill="#fff" opacity=".35"/>`;
+  } else if(style==="pinsel"){
+    const k = Math.min(n,6); vb = `0 0 ${k*12+4} 60`;
+    for(let i=0;i<k;i++){ const x=4+i*12, w=2.5+i*1.1; body += `<rect x="${x+3-w/2+2}" y="20" width="${w}" height="38" rx="1" fill="#c0392b"/><rect x="${x+3-w/2+1.5}" y="14" width="${w+1}" height="8" fill="#b9bec6"/><path d="M${x+3-w/2+1.5} 14 Q${x+5} -2 ${x+3+w/2+2.5} 14Z" fill="${i%2?"#3b2a1b":"#c9a36b"}"/>`; }
+  }
+  const [,, vw, vh] = vb.split(" ").map(Number);
+  let W = Math.round(H*vw/vh); if(W > H*3.4){ W = Math.round(H*3.4); }
+  const HH = Math.round(W*vh/vw);
+  return `<svg class="ico" viewBox="${vb}" width="${W}" height="${Math.min(H,HH)}" aria-hidden="true">${body}</svg>`;
+}
+const ICONS = {
+  geo:`<path d="M4 52 L60 52 L32 24Z" fill="#cfe6ff" fill-opacity=".8" stroke="#3d74a8" stroke-width="1.6" stroke-linejoin="round"/>
+    <path d="M14 52 A18 18 0 0 1 50 52" fill="none" stroke="#3d74a8" stroke-width=".8"/>
+    ${Array.from({length:11},(_,i)=>`<line x1="${8+i*4.8}" x2="${8+i*4.8}" y1="52" y2="${i%5===0?46:48.5}" stroke="#3d74a8" stroke-width=".8"/>`).join("")}
+    <line x1="32" x2="32" y1="52" y2="34" stroke="#3d74a8" stroke-width=".8"/><circle cx="32" cy="52" r="1.6" fill="#d4442a"/>`,
+  zirkel:`<circle cx="32" cy="10" r="4" fill="#5b6470"/><rect x="30" y="2" width="4" height="6" rx="1" fill="#5b6470"/>
+    <path d="M32 12 L16 56" stroke="#8b949f" stroke-width="4" stroke-linecap="round"/><path d="M32 12 L48 56" stroke="#8b949f" stroke-width="4" stroke-linecap="round"/>
+    <path d="M16 56 L15 62" stroke="#3a3f46" stroke-width="1.6"/><path d="M48 56 L49 62" stroke="#3a3f46" stroke-width="2.4"/>
+    <circle cx="32" cy="34" r="4" fill="#2563a8"/><path d="M22 34 H42" stroke="#5b6470" stroke-width="1.5"/>`,
+  radierer:`<g transform="rotate(-18 32 32)"><rect x="10" y="20" width="44" height="22" rx="4" fill="#fff" stroke="#9aa4ae" stroke-width="1.4"/>
+    <rect x="34" y="20" width="20" height="22" rx="4" fill="#2f6fd0"/><rect x="34" y="20" width="6" height="22" fill="#2f6fd0"/></g>`,
+  spitzer:`<rect x="8" y="22" width="40" height="30" rx="8" fill="#e6475b"/><rect x="8" y="22" width="40" height="10" rx="5" fill="#f37383"/>
+    <rect x="44" y="26" width="14" height="22" rx="3" fill="#c9ced6" stroke="#8d939c"/><circle cx="51" cy="37" r="4" fill="#2f343b"/><rect x="45" y="30" width="12" height="2" fill="#7c838c"/>`,
+  rechner:`<rect x="14" y="4" width="36" height="56" rx="5" fill="#3a414b"/><rect x="18" y="9" width="28" height="11" rx="2" fill="#b8d3a5"/>
+    <text x="44" y="18" text-anchor="end" font-size="8" font-family="monospace" fill="#2b3a22">3,14</text>
+    ${Array.from({length:12},(_,i)=>`<rect x="${18+(i%4)*7.2}" y="${25+Math.floor(i/4)*10.5}" width="5.6" height="7.5" rx="1.4" fill="${i%4===3?"#f08a24":"#d6dbe2"}"/>`).join("")}`,
+  kleber:`<rect x="22" y="22" width="20" height="38" rx="4" fill="#f5d10a"/><rect x="22" y="40" width="20" height="10" fill="#e9483a"/>
+    <rect x="21" y="8" width="22" height="16" rx="4" fill="#ffffff" stroke="#b6bcc4"/><rect x="21" y="20" width="22" height="4" fill="#d8dde3"/>`,
+  killer:`<rect x="8" y="26" width="48" height="12" rx="5" fill="#ffffff" stroke="#9aa4ae"/><rect x="8" y="26" width="16" height="12" rx="5" fill="#2c49c9"/>
+    <rect x="44" y="26" width="12" height="12" rx="5" fill="#e83e8c"/><path d="M6 32 L2 32" stroke="#2c49c9" stroke-width="3" stroke-linecap="round"/>`,
+};
+const iconSVG = (k, H) => `<svg class="ico" viewBox="0 0 64 64" width="${H}" height="${H}" aria-hidden="true">${ICONS[k]||""}</svg>`;
+const emoTile = (e, H) => `<div class="emo" style="width:${H}px;height:${H}px;font-size:${Math.round(H*.55)}px" aria-hidden="true">${e}</div>`;
+
+/* ---------- Eintrag -> Text & Bild ---------- */
+function patFor(e){
+  const it = itemById(e.id);
+  if(it?.kind==="heft"){
+    const l = getLin(e.v.lin);
+    const p = l ? {...l} : {t:"unknown", rand:"none"};
+    if(it.holes) p.holes = true;
+    return p;
+  }
+  if(it?.kind==="karte") return {t:e.v.pat==="blanko"?"blanko":e.v.pat==="kariert"?"kariert":"liniert", mm:e.v.pat==="kariert"?5:6, rand:"none", kopf:e.v.pat==="liniert"};
+  if(it?.kind==="paper") return {t:"blanko", rand:"none", glue:true};
+  if(it?.kind==="mm") return {t:"mm", rand:"none"};
+  return null;
+}
+function vis(e, size="sm"){
+  const it = itemById(e.id);
+  const H = size==="lg" ? 150 : size==="md" ? 72 : 54;
+  if(!it) return emoTile("📝", H);
+  switch(it.kind){
+    case "heft": case "paper": case "mm": return pageVis(patFor(e), e.v.fmt, false, size);
+    case "karte": return pageVis(patFor(e), e.v.fmt, true, size);
+    case "color": return colorSVG(it.shape, e.v.color, it.shape==="kuli" ? Math.round(H*.45) : H);
+    case "pencil": return pencilSVG(e.v.hard, Math.round(H*.55));
+    case "ruler": return rulerSVG(e.v.len, H);
+    case "set": return setSVG(it.style, e.v.count, H);
+    case "icon": return iconSVG(it.icon, H);
+    default: return emoTile(it.emo || "📦", H);
+  }
+}
+const HARD = {HB:"mittel, Standard zum Schreiben", B:"weich, gut zum Zeichnen", "2B":"weich, gut zum Zeichnen und Skizzieren", H:"hart, für feine Linien in Geometrie", "2H":"sehr hart, feine Konstruktionslinien", F:"mittelhart"};
+function describe(e){
+  const it = itemById(e.id);
+  if(!it) return {t:e.v.text, s:"eigener Eintrag"};
+  const cn = k => (COLORS[k]||[,k])[1];
+  switch(it.kind){
+    case "heft": {
+      const l = getLin(e.v.lin);
+      if(!l) return {t:`${it.n} ${e.v.fmt} · Lineatur ${e.v.lin}`, s:"Diese Lineatur kenne ich nicht. Bitte mit der Schulliste vergleichen."};
+      const odd = l.fmt!==e.v.fmt ? ` · meist in ${l.fmt}` : "";
+      return {t:`${it.n} ${e.v.fmt} · Lineatur ${l.id}`, s:`${l.d}${l.kls?" · "+l.kls:""}${odd}`};
+    }
+    case "karte": return {t:`Karteikarten ${e.v.fmt}, ${e.v.pat}`, s:"gelocht oder ungelocht, z. B. 100 Stück"};
+    case "paper": return {t:`${it.n} ${e.v.fmt}`, s:"blanko, festes Papier"};
+    case "mm": return {t:`${it.n} A4`, s:"1-mm-Raster, als Block"};
+    case "color": return {t:`${it.n} ${cn(e.v.color)}`, s:it.note||""};
+    case "pencil": return {t:`${it.n} ${e.v.hard}`, s:HARD[e.v.hard]||""};
+    case "ruler": return {t:`${it.n} ${e.v.len} cm`, s:e.v.len>=30?"passt quer auf A4":"passt in die Federmappe"};
+    case "set": {
+      if(it.style==="kasten") return {t:`${it.n} mit ${e.v.count} Farben`, s:it.note||""};
+      if(it.unit) return {t:`${it.n}, ${e.v.count} ${it.unit}`, s:"verschiedene Farben"};
+      if(it.style==="pinsel") return {t:`${it.n}, ${e.v.count} Stück`, s:it.note};
+      return {t:`${it.n}, ${e.v.count}er-Set`, s:it.note||`${e.v.count} Farben`};
+    }
+    default: return {t:it.n, s:it.note||""};
+  }
+}
+
+/* ---------- Eingabe verstehen ---------- */
+const STOP = new Set(["mit","ohne","und","fuer","der","die","das","den","dem","ein","eine","einen","einem","in","im","von","x","stueck","stk","farbe","farben","farbig","bitte","neu","neue","neues","format","din","lineatur","lin","oder","je","cm","mm","er","teilig","set"]);
+const PATW = [
+  [/^(kariert\w*|karo\w*|kaestchen)$/, "kariert"],
+  [/^(liniert\w*|linien|zeilen|lin)$/, "liniert"],
+  [/^(blanko|unliniert\w*|leer\w*|blank)$/, "blanko"],
+  [/^(rautiert\w*)$/, "rautiert"],
+];
+function colorOf(w){
+  if(COLOR_ALIAS[w]) return COLOR_ALIAS[w];
+  if(COLORS[w]) return w;
+  const s = w.replace(/(en|er|es|e)$/,"");
+  if(s.length>2 && COLORS[s]) return s;
+  if(COLOR_ALIAS[s]) return COLOR_ALIAS[s];
+  return null;
+}
+function parse(q){
+  const m = {words:[], bare:[]};
+  let s = " " + norm(q).replace(/[-,;/+()]/g," ") + " ";
+  s = s.replace(/\s(\d{1,2})\s*(?:x|×|stk\.?|stueck)(?=\s)/g, (_,n)=>{ m.qty=+n; return " "; });
+  s = s.replace(/\b(?:lineatur|lin)\.?\s*(\d{1,2}[a-z]?)\b/g, (_,n)=>{ m.lin=n.toUpperCase(); return " "; });
+  s = s.replace(/\b(?:din\s*)?a\s?([2-8])\b/g, (_,n)=>{ m.fmt="A"+n; return " "; });
+  s = s.replace(/\b(?:klasse|kl\.?)\s*(\d{1,2})\b|\b(\d{1,2})\.?\s*klasse\b/g, (_,a,b)=>{ m.kl=+(a||b); return " "; });
+  s = s.replace(/\b(\d{1,2}(?:[.,]\d)?)\s*mm\b/g, (_,n)=>{ m.mm=parseFloat(n.replace(",",".")); return " "; });
+  s = s.replace(/\b(\d{2})\s*cm\b/g, (_,n)=>{ m.len=+n; return " "; });
+  s = s.replace(/\b(\d{1,2})\s*(?:er|farben|teilig|tlg\.?)\b/g, (_,n)=>{ m.count=+n; return " "; });
+  s = s.replace(/ohne\s+rand/g," __norand ");
+  s = s.replace(/doppel\s*rand|rand\s+links\s+und\s+rechts|rand\s+beidseitig|(?:2|zwei)\s+raender|beidseitig\w*\s+rand/g," __doppel ");
+  for(const w of s.split(/\s+/)){
+    if(!w) continue;
+    if(w==="__norand"){ m.rand="none"; continue; }
+    if(w==="__doppel"||w==="doppelrand"){ m.rand="doppel"; continue; }
+    if(w==="rand"||w==="raender"||w==="randlinie"){ if(!m.rand) m.rand=true; continue; }
+    const pw = PATW.find(([re])=>re.test(w)); if(pw && w!=="lin"){ m.pat=pw[1]; continue; }
+    if(/^\d{1,3}$/.test(w)){ m.bare.push({n:+w, pos:m.words.length}); continue; }
+    if(/^(hb|[2-9]b|[2-9]h)$/.test(w)){ m.hard=w.toUpperCase(); continue; }
+    if(/^[bhf]$/.test(w)){ m.hardMaybe=w.toUpperCase(); continue; }
+    const c = colorOf(w); if(c){ m.color=c; continue; }
+    if(STOP.has(w)) continue;
+    m.words.push(w);
+  }
+  return m;
+}
+function scoreItem(it, words){
+  let sc = 0;
+  for(const w of words){
+    if(w.length<2) continue;
+    let best = 0;
+    for(const s of it.nsyn){
+      if(s===w) best = Math.max(best, 12+w.length);
+      else if(s.startsWith(w)) best = Math.max(best, 4+w.length);
+      else if(w.startsWith(s) && s.length>=4) best = Math.max(best, 6+s.length);
+      else if(w.length>=4 && s.includes(w)) best = Math.max(best, 2+w.length);
+    }
+    sc += best;
+  }
+  return sc;
+}
+const hasLinFilter = m => !!(m.lin || m.pat || m.rand || m.mm || (m.kl && !m.words.length));
+function matchLin(l, m){
+  if(m.pat){
+    const ok = {kariert:["kariert"], liniert:["liniert","schreib","schreib3","spalten"], blanko:["blanko"], rautiert:["rautiert"]}[m.pat];
+    if(!ok.includes(l.t)) return false;
+  }
+  if(m.rand===true && l.rand==="none") return false;
+  if(m.rand==="none" && l.rand!=="none") return false;
+  if(m.rand==="doppel" && l.rand!=="doppel") return false;
+  if(m.mm && l.mm!==m.mm) return false;
+  if(m.kl && !l.kl.includes(m.kl)) return false;
+  return true;
+}
+function variantsFor(it, m0){
+  const m = {...m0, bare:[...m0.bare]};
+  const take = pred => { const i = m.bare.findIndex(pred); return i<0 ? null : m.bare.splice(i,1)[0].n; };
+  const out = [];
+  switch(it.kind){
+    case "heft": {
+      if(!m.lin){ const b = take(b => (b.pos>0 || !m.words.length) && (getLin(b.n) || b.n>=10)); if(b!=null) m.lin=String(b); }
+      if(m.lin){ if(it.lins && !it.lins.includes(m.lin)) break; out.push({fmt: m.fmt || getLin(m.lin)?.fmt || "A4", lin:m.lin}); break; }
+      let pool = it.lins ? it.lins.map(getLin) : LIN.filter(l => !SPECIAL_LIN.includes(l.id));
+      let c = pool.filter(l => matchLin(l, m));
+      if(m.fmt){ const same = c.filter(l => l.fmt===m.fmt); if(same.length) c = same; }
+      if(!it.lins && !m.pat && !m.rand && !m.mm && !m.kl){
+        const order = POPULAR[m.fmt] || POPULAR.any;
+        c = order.map(getLin).filter(Boolean);
+      }
+      if(m.kl) c.sort((a,b)=>a.kl.length-b.kl.length);
+      c.slice(0,6).forEach(l => out.push({fmt: m.fmt || (it.lins ? (it.id==="collegeblock" ? "A4" : l.fmt) : l.fmt), lin:l.id}));
+      break;
+    }
+    case "karte": {
+      const fmt = m.fmt && ["A5","A6","A7","A8"].includes(m.fmt) ? m.fmt : "A7";
+      (m.pat ? [m.pat==="rautiert"?"kariert":m.pat] : ["liniert","kariert","blanko"]).forEach(p => out.push({fmt, pat:p}));
+      break;
+    }
+    case "paper": (m.fmt ? [m.fmt] : it.fmts).forEach(f => out.push({fmt:f})); break;
+    case "mm": out.push({fmt:"A4"}); break;
+    case "color": (m.color ? [m.color] : it.colors).forEach(c => out.push({color:c})); break;
+    case "pencil": {
+      const h = m.hard || m.hardMaybe;
+      (h ? [h] : ["HB","2B","H"]).forEach(x => out.push({hard:x})); break;
+    }
+    case "ruler": {
+      const b = take(b => b.n>=10 && b.n<=60);
+      const len = m.len || b;
+      (len ? [len] : [30,15]).forEach(l => out.push({len:l})); break;
+    }
+    case "set": {
+      const b = take(b => b.n>=3 && (it.counts.includes(b.n) || b.n>=6));
+      const cnt = m.count || b;
+      (cnt ? [Math.min(cnt, it.style==="marker"?6:it.style==="kasten"?24:cnt)] : it.counts).forEach(n => out.push({count:n})); break;
+    }
+    default: out.push({});
+  }
+  const q = m.qty || take(b => b.pos===0 && b.n>=1 && b.n<=50) || 1;
+  return out.map(v => ({id:it.id, v, qty:q}));
+}
+function suggest(q){
+  const m = parse(q);
+  if(!q.trim()) return [];
+  let scored = ITEMS.map(it => ({it, sc:scoreItem(it, m.words)})).filter(x => x.sc>0);
+  if(!scored.length){
+    if(hasLinFilter(m) || (m.fmt && !m.color)) scored = [{it:itemById("heft"),sc:5},{it:itemById("collegeblock"),sc:3}];
+    else if(m.color) scored = ["umschlag","schnellhefter","sammelmappe"].map((id,i)=>({it:itemById(id),sc:3-i}));
+    else if(m.hard) scored = [{it:itemById("bleistift"),sc:3}];
+    else if(m.len) scored = [{it:itemById("lineal"),sc:3}];
+  } else if(hasLinFilter(m)){
+    scored.forEach(x => { if(x.it.kind==="heft") x.sc += 3; });
+  }
+  scored.sort((a,b)=>b.sc-a.sc);
+  const top = scored[0]?.sc || 0;
+  scored = scored.filter(x => x.sc >= top*.6).slice(0,5);
+  const res = [];
+  scored.forEach((x,i) => {
+    const vs = variantsFor(x.it, m);
+    res.push(...vs.slice(0, i===0 ? 6 : 3));
+  });
+  return res.slice(0,8);
+}
+
+/* ---------- Zustand ---------- */
+const KEY = "schulkram.v1";
+let state = {name:"", klasse:"", items:[]};
+try{ const raw = localStorage.getItem(KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){}
+const save = () => { try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} };
+const keyOf = e => e.id + "|" + JSON.stringify(e.v);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+
+function addEntry(e){
+  const k = keyOf(e);
+  let ex = state.items.find(x => keyOf(x)===k);
+  if(ex){ ex.qty += e.qty||1; ex.done = false; }
+  else { ex = {uid:uid(), id:e.id, v:e.v, qty:e.qty||1, done:false, note:""}; state.items.push(ex); }
+  save(); renderList(ex.uid);
+  toast(`${describe(ex).t} hinzugefügt`);
+}
+
+/* ---------- Vorschläge anzeigen ---------- */
+const qEl = $("#q"), sugg = $("#sugg"), sl = $("#sugglist"), prev = $("#prev");
+let cur = [], act = 0;
+function openSugg(on){ sugg.classList.toggle("open", on); qEl.setAttribute("aria-expanded", on); }
+function renderSugg(){
+  const q = qEl.value;
+  cur = suggest(q);
+  if(q.trim()) cur.push({id:"custom", v:{text:q.trim()}, qty:1});
+  if(!q.trim()){ openSugg(false); return; }
+  act = Math.min(act, cur.length-1);
+  sl.innerHTML = cur.map((e,i) => {
+    const d = describe(e);
+    const isC = e.id==="custom";
+    return `<li class="sug" role="option" id="opt${i}" data-i="${i}" aria-selected="${i===act}">
+      ${isC ? emoTile("📝",54) : vis(e,"sm")}
+      <div><div class="t">${e.qty>1?`<span class="qn">${e.qty}×</span>`:""}${isC?`„${esc(d.t)}“`:esc(d.t)}</div><div class="s">${isC?"als eigenen Eintrag übernehmen":esc(d.s)}</div></div>
+      <span class="plus">+ dazu</span></li>`;
+  }).join("") + (cur.length<=1 ? `<li class="hint">Dazu habe ich nichts gefunden. Versuch zum Beispiel <code>A4 Heft kariert mit Rand</code>, <code>Lineatur 27</code>, <code>Bleistift 2B</code> oder <code>Schnellhefter grün</code>.</li>` : "");
+  qEl.setAttribute("aria-activedescendant", "opt"+act);
+  renderPrev();
+  openSugg(true);
+}
+function renderPrev(){
+  const e = cur[act];
+  if(!e || e.id==="custom"){ prev.innerHTML = `<div class="ps">Wähle einen Vorschlag aus, um ihn hier groß zu sehen.</div>`; return; }
+  const d = describe(e);
+  prev.innerHTML = `${vis(e,"lg")}<div class="pt">${esc(d.t)}</div><div class="ps">${esc(d.s)}</div>`;
+}
+function setAct(i){
+  act = (i+cur.length)%cur.length;
+  sl.querySelectorAll(".sug").forEach((li,j)=>li.setAttribute("aria-selected", j===act));
+  sl.querySelector(`#opt${act}`)?.scrollIntoView({block:"nearest"});
+  qEl.setAttribute("aria-activedescendant","opt"+act);
+  renderPrev();
+}
+function pick(i){
+  const e = cur[i]; if(!e) return;
+  addEntry({id:e.id, v:e.v, qty:e.qty});
+  qEl.value = ""; act = 0; openSugg(false); qEl.focus();
+}
+qEl.addEventListener("input", () => { act = 0; renderSugg(); });
+qEl.addEventListener("focus", () => { if(qEl.value.trim()) renderSugg(); });
+qEl.addEventListener("keydown", ev => {
+  if(!sugg.classList.contains("open")) return;
+  if(ev.key==="ArrowDown"){ ev.preventDefault(); setAct(act+1); }
+  else if(ev.key==="ArrowUp"){ ev.preventDefault(); setAct(act-1); }
+  else if(ev.key==="Enter"){ ev.preventDefault(); pick(act); }
+  else if(ev.key==="Escape"){ openSugg(false); }
+});
+sl.addEventListener("mousedown", ev => ev.preventDefault());
+sl.addEventListener("click", ev => { const li = ev.target.closest(".sug"); if(li) pick(+li.dataset.i); });
+sl.addEventListener("mousemove", ev => { const li = ev.target.closest(".sug"); if(li && +li.dataset.i!==act) setAct(+li.dataset.i); });
+document.addEventListener("click", ev => { if(!ev.target.closest(".search")) openSugg(false); });
+
+["A4 Heft Lineatur 26","A5 Heft Lineatur 1","Heft kariert mit Rand","Collegeblock","Füller","24er Buntstifte","Geodreieck","Schnellhefter rot","Lineal 30 cm","Bleistift 2B"].forEach(t => {
+  const b = document.createElement("button"); b.type="button"; b.textContent=t;
+  b.onclick = () => { qEl.value=t; act=0; qEl.focus(); renderSugg(); };
+  $("#chips").appendChild(b);
+});
+
+/* ---------- Liste ---------- */
+const listEl = $("#list");
+function renderList(flashUid){
+  const n = state.items.length, done = state.items.filter(x=>x.done).length;
+  $("#progtxt").textContent = `${done} von ${n} besorgt`;
+  $("#progbar").style.width = n ? (done/n*100)+"%" : "0";
+  if(!n){
+    listEl.innerHTML = `<div class="empty"><b>Noch leer.</b>Tipp oben ein, was auf der Liste der Schule steht, z. B. „A4 Heft Lineatur 27“.</div>`;
+    return;
+  }
+  listEl.innerHTML = CATS.map(([cid,cname]) => {
+    const rows = state.items.filter(x => (itemById(x.id)?.cat || "eigen") === cid);
+    if(!rows.length) return "";
+    return `<div class="grp"><h3>${cname}</h3><ul>${rows.map(x => {
+      const d = describe(x);
+      return `<li class="row${x.done?" done":""}${x.uid===flashUid?" flash":""}" data-uid="${x.uid}">
+        <label class="chk"><input type="checkbox" ${x.done?"checked":""} aria-label="${esc(d.t)} besorgt"><span></span></label>
+        <div class="rvis">${x.id==="custom"?emoTile("📝",54):vis(x,"sm")}</div>
+        <div class="rtxt"><div class="rt">${esc(d.t)}</div>${d.s?`<div class="rs">${esc(d.s)}</div>`:""}
+          <input class="note" value="${esc(x.note||"")}" placeholder="Notiz, z. B. Fach oder Farbe" aria-label="Notiz"></div>
+        <div class="qty"><button type="button" data-a="dec" aria-label="weniger">−</button><span>${x.qty}</span><button type="button" data-a="inc" aria-label="mehr">+</button></div>
+        <button type="button" class="del" data-a="del" aria-label="${esc(d.t)} entfernen">×</button></li>`;
+    }).join("")}</ul></div>`;
+  }).join("");
+}
+const rowItem = el => { const li = el.closest(".row"); return li && state.items.find(x => x.uid===li.dataset.uid); };
+listEl.addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-a]"); if(!b) return;
+  const x = rowItem(b); if(!x) return;
+  if(b.dataset.a==="inc") x.qty++;
+  if(b.dataset.a==="dec") x.qty = Math.max(1, x.qty-1);
+  if(b.dataset.a==="del") state.items = state.items.filter(y => y!==x);
+  save(); renderList();
+});
+listEl.addEventListener("change", ev => {
+  if(ev.target.type!=="checkbox") return;
+  const x = rowItem(ev.target); if(!x) return;
+  x.done = ev.target.checked; save(); renderList();
+});
+listEl.addEventListener("input", ev => {
+  if(!ev.target.classList.contains("note")) return;
+  const x = rowItem(ev.target); if(x){ x.note = ev.target.value; save(); }
+});
+
+/* ---------- Kopfzeile & Werkzeuge ---------- */
+const nameEl = $("#name"), klEl = $("#klasse");
+nameEl.value = state.name||""; klEl.value = state.klasse||"";
+nameEl.oninput = () => { state.name = nameEl.value; save(); };
+klEl.oninput = () => { state.klasse = klEl.value; save(); };
+
+function asText(){
+  let t = "Schulkram, Einkaufsliste" + (state.name?` für ${state.name}`:"") + (state.klasse?` (Klasse ${state.klasse})`:"") + "\n";
+  CATS.forEach(([cid,cname]) => {
+    const rows = state.items.filter(x => (itemById(x.id)?.cat||"eigen")===cid);
+    if(!rows.length) return;
+    t += `\n${cname}\n`;
+    rows.forEach(x => { const d = describe(x);
+      t += `${x.done?"[x]":"[ ]"} ${x.qty}× ${d.t}${x.id!=="custom"&&d.s?" ("+d.s+")":""}${x.note?" – "+x.note:""}\n`; });
+  });
+  return t;
+}
+$("#copy").onclick = async () => {
+  const t = asText();
+  try{ await navigator.clipboard.writeText(t); toast("Liste kopiert"); }
+  catch(e){ const ta = document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy"); toast("Liste kopiert"); }catch(_){ toast("Kopieren ging nicht"); } ta.remove(); }
+};
+$("#print").onclick = () => window.print();
+let clearArm = 0;
+$("#clear").onclick = ev => {
+  const b = ev.currentTarget;
+  if(!state.items.length) return;
+  if(Date.now()-clearArm < 3000){ state.items=[]; save(); renderList(); b.textContent="Liste leeren"; clearArm=0; toast("Liste geleert"); return; }
+  clearArm = Date.now(); b.textContent = "Wirklich? Nochmal tippen";
+  setTimeout(()=>{ if(clearArm && Date.now()-clearArm>=3000){ b.textContent="Liste leeren"; clearArm=0; } }, 3100);
+};
+let tt;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(()=>t.classList.remove("on"), 1800); }
+
+/* ---------- Lineaturen-Übersicht ---------- */
+$("#lexgrid").innerHTML = LIN.map(l => {
+  const item = l.id==="14" ? "notenheft" : ["53","54"].includes(l.id) ? "vokabelheft" : "heft";
+  const pd = pageData(l, l.fmt, false);
+  return `<button type="button" data-lin="${l.id}" data-item="${item}">
+    <div class="fw">${svgPage(pd,72)}<span class="fmtb">${l.fmt}</span></div>
+    <div><div class="n">Lin. ${l.id}</div><div class="d">${esc(l.d)}${l.kls?"<br>"+esc(l.kls):""}</div></div></button>`;
+}).join("");
+$("#lexgrid").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-lin]"); if(!b) return;
+  const l = getLin(b.dataset.lin);
+  addEntry({id:b.dataset.item, v:{fmt:l.fmt, lin:l.id}, qty:1});
+});
+
+renderList();
+</script>
+</body>
+</html>
