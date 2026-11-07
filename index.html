@@ -131,6 +131,17 @@ button.lupe:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
 .tools button{border:1px solid var(--line);background:transparent;border-radius:9px;padding:6px 11px;font-size:14px;cursor:pointer}
 .tools button:hover{border-color:var(--ink)}
 .tools button.warn{color:var(--accent)}
+.tools button.pri{background:var(--ink);color:var(--card);border-color:var(--ink)}
+.tools .opt{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);cursor:pointer;padding:0 4px}
+.tools .opt input{accent-color:var(--accent2);width:15px;height:15px;margin:0}
+[hidden]{display:none!important}
+.imp{margin-top:22px;background:var(--hl);border:2px solid var(--ink);border-radius:14px;padding:14px 16px;display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+.imp b{display:block;font:700 22px/1.15 Kalam,cursive}
+.imp span{font-size:14px;color:var(--muted)}
+.impbtn{display:flex;flex-wrap:wrap;gap:6px}
+.impbtn button{border:1px solid var(--ink);background:var(--card);border-radius:9px;padding:7px 12px;font-size:14px;cursor:pointer}
+.impbtn button.pri{background:var(--ink);color:var(--card)}
+.impbtn button.ghost{border-color:transparent;background:transparent;text-decoration:underline}
 .grp{padding:6px 0 4px}
 .grp h3{margin:12px 18px 4px 62px;font:700 15px "Atkinson Hyperlegible",sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .grp ul{list-style:none;margin:0;padding:0}
@@ -204,7 +215,8 @@ footer a{color:inherit}
   .row{break-inside:avoid}
   .note:placeholder-shown{display:none}
   .wrap{padding-top:0}
-  .printqr{display:flex;align-items:center;gap:12px;font-size:12px;color:#333;margin-left:auto}
+  .printqr{display:flex;align-items:flex-start;gap:22px;font-size:12px;color:#333;margin-left:auto}
+  .qrfig{display:flex;align-items:center;gap:10px;max-width:7.2cm}
   .printqr .qr{width:2.4cm;height:2.4cm;flex:none}
   .tag,.prog{display:none!important}
   header{align-items:center;margin-bottom:10px}
@@ -232,8 +244,8 @@ footer a{color:inherit}
       <label>Klasse<input id="klasse" class="k" placeholder="3b" autocomplete="off"></label>
     </div>
     <div class="printqr">
-      <svg class="qr" viewBox="-4 -4 37 37" role="img" aria-label="QR-Code: mkrgr.github.io/schulkram"><rect x="-4" y="-4" width="37" height="37" fill="#fff"/><path stroke="#000" shape-rendering="crispEdges" d="M0 0.5h7m1 0h1m1 0h1m4 0h6m1 0h7m-29 1h1m5 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h1m3 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m6 0h3m2 0h2m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h1m5 0h3m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m3 0h1m5 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m3 0h3m1 0h1m1 0h4m2 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h2m2 0h3m2 0h3m-20 1h1m1 0h2m1 0h3m2 0h1m2 0h2m1 0h3m3 0h1m2 0h1m1 0h2m-29 1h2m1 0h1m1 0h1m1 0h4m1 0h1m2 0h1m3 0h1m2 0h3m3 0h1m-29 1h1m1 0h1m1 0h1m1 0h2m6 0h1m1 0h1m3 0h1m3 0h1m1 0h2m-28 1h1m6 0h4m2 0h3m2 0h1m4 0h1m4 0h1m-29 1h4m1 0h3m2 0h3m4 0h1m3 0h1m3 0h2m-26 1h1m1 0h2m3 0h2m2 0h2m1 0h1m1 0h1m1 0h1m2 0h1m3 0h3m-25 1h1m1 0h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h3m2 0h1m1 0h3m-29 1h1m1 0h1m6 0h1m2 0h2m1 0h2m3 0h3m1 0h1m2 0h1m-24 1h1m1 0h2m2 0h1m4 0h1m2 0h1m2 0h1m2 0h2m1 0h1m-26 1h4m1 0h1m2 0h4m1 0h1m1 0h1m2 0h1m2 0h1m1 0h3m-28 1h1m2 0h1m1 0h3m1 0h2m4 0h2m1 0h1m4 0h1m2 0h1m-24 1h1m1 0h1m1 0h2m1 0h2m5 0h1m2 0h5m1 0h1m-26 1h1m2 0h1m1 0h2m1 0h3m1 0h1m2 0h3m1 0h7m-19 1h1m1 0h1m2 0h2m1 0h1m3 0h1m3 0h5m-29 1h7m1 0h2m1 0h3m3 0h4m1 0h1m1 0h2m1 0h1m-28 1h1m5 0h1m1 0h2m1 0h1m3 0h2m1 0h1m1 0h1m3 0h2m-26 1h1m1 0h3m1 0h1m4 0h1m2 0h4m2 0h5m1 0h2m-28 1h1m1 0h3m1 0h1m1 0h1m3 0h1m1 0h3m3 0h2m1 0h3m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m4 0h1m4 0h1m2 0h1m1 0h1m-29 1h1m5 0h1m4 0h2m5 0h8m1 0h1m-28 1h7m1 0h1m2 0h5m2 0h4m2 0h1m2 0h1"/></svg>
-      <div><b>Schulkram</b>Diese Liste online erstellen:<br><span class="url">mkrgr.github.io/schulkram</span></div>
+      <div class="qrfig" id="listqrfig" hidden><span id="listqr"></span><div><b>Diese Liste</b>scannen, um sie am Handy zu öffnen und abzuhaken</div></div>
+      <div class="qrfig"><svg class="qr" viewBox="-4 -4 37 37" role="img" aria-label="QR-Code: mkrgr.github.io/schulkram"><rect x="-4" y="-4" width="37" height="37" fill="#fff"/><path stroke="#000" shape-rendering="crispEdges" d="M0 0.5h7m1 0h1m1 0h1m4 0h6m1 0h7m-29 1h1m5 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h1m3 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m6 0h3m2 0h2m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h1m5 0h3m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m2 0h1m3 0h1m5 0h1m2 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m3 0h3m1 0h1m1 0h4m2 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h2m2 0h3m2 0h3m-20 1h1m1 0h2m1 0h3m2 0h1m2 0h2m1 0h3m3 0h1m2 0h1m1 0h2m-29 1h2m1 0h1m1 0h1m1 0h4m1 0h1m2 0h1m3 0h1m2 0h3m3 0h1m-29 1h1m1 0h1m1 0h1m1 0h2m6 0h1m1 0h1m3 0h1m3 0h1m1 0h2m-28 1h1m6 0h4m2 0h3m2 0h1m4 0h1m4 0h1m-29 1h4m1 0h3m2 0h3m4 0h1m3 0h1m3 0h2m-26 1h1m1 0h2m3 0h2m2 0h2m1 0h1m1 0h1m1 0h1m2 0h1m3 0h3m-25 1h1m1 0h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h3m2 0h1m1 0h3m-29 1h1m1 0h1m6 0h1m2 0h2m1 0h2m3 0h3m1 0h1m2 0h1m-24 1h1m1 0h2m2 0h1m4 0h1m2 0h1m2 0h1m2 0h2m1 0h1m-26 1h4m1 0h1m2 0h4m1 0h1m1 0h1m2 0h1m2 0h1m1 0h3m-28 1h1m2 0h1m1 0h3m1 0h2m4 0h2m1 0h1m4 0h1m2 0h1m-24 1h1m1 0h1m1 0h2m1 0h2m5 0h1m2 0h5m1 0h1m-26 1h1m2 0h1m1 0h2m1 0h3m1 0h1m2 0h3m1 0h7m-19 1h1m1 0h1m2 0h2m1 0h1m3 0h1m3 0h5m-29 1h7m1 0h2m1 0h3m3 0h4m1 0h1m1 0h2m1 0h1m-28 1h1m5 0h1m1 0h2m1 0h1m3 0h2m1 0h1m1 0h1m3 0h2m-26 1h1m1 0h3m1 0h1m4 0h1m2 0h4m2 0h5m1 0h2m-28 1h1m1 0h3m1 0h1m1 0h1m3 0h1m1 0h3m3 0h2m1 0h3m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m4 0h1m4 0h1m2 0h1m1 0h1m-29 1h1m5 0h1m4 0h2m5 0h8m1 0h1m-28 1h7m1 0h1m2 0h5m2 0h4m2 0h1m2 0h1"/></svg><div><b>Schulkram</b>Eigene Liste erstellen:<br><span class="url">mkrgr.github.io/schulkram</span></div></div>
     </div>
   </header>
 
@@ -249,11 +261,22 @@ footer a{color:inherit}
     <div class="chips" id="chips"><b>Probier mal:</b></div>
   </div>
 
+  <div class="imp" id="imp" hidden role="region" aria-label="Geteilte Liste">
+    <div><b id="imptitle"></b><span id="impsub"></span></div>
+    <div class="impbtn">
+      <button type="button" class="pri" id="impadd">Zu meiner Liste hinzufügen</button>
+      <button type="button" id="imprep">Meine Liste ersetzen</button>
+      <button type="button" class="ghost" id="impno">Verwerfen</button>
+    </div>
+  </div>
+
   <section class="sheet" aria-labelledby="lt">
     <div class="shead">
       <h2 id="lt">Einkaufsliste</h2>
       <div class="prog"><span id="progtxt">0 von 0 besorgt</span><div class="bar"><i id="progbar"></i></div></div>
       <div class="tools">
+        <button id="share" type="button" class="pri">Liste teilen</button>
+        <label class="opt"><input type="checkbox" id="shnotes">Notizen mitschicken</label>
         <button id="copy" type="button">Als Text kopieren</button>
         <button id="print" type="button">Drucken</button>
         <button id="clear" type="button" class="warn">Liste leeren</button>
@@ -892,7 +915,8 @@ document.addEventListener("click", ev => { if(!ev.target.closest(".search")) ope
 
 /* ---------- Liste ---------- */
 const listEl = $("#list");
-function renderList(flashUid){
+function renderList(flashUid){ renderListBody(flashUid); updateListQR(); }
+function renderListBody(flashUid){
   const n = state.items.length, done = state.items.filter(x=>x.done).length;
   $("#progtxt").textContent = `${done} von ${n} besorgt`;
   $("#progbar").style.width = n ? (done/n*100)+"%" : "0";
@@ -951,12 +975,12 @@ function asText(){
   });
   return t;
 }
-$("#copy").onclick = async () => {
-  const t = asText();
-  try{ await navigator.clipboard.writeText(t); toast("Liste kopiert"); }
+async function copyText(t, msg){
+  try{ await navigator.clipboard.writeText(t); toast(msg); }
   catch(e){ const ta = document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select();
-    try{ document.execCommand("copy"); toast("Liste kopiert"); }catch(_){ toast("Kopieren ging nicht"); } ta.remove(); }
-};
+    try{ document.execCommand("copy"); toast(msg); }catch(_){ toast("Kopieren ging nicht"); } ta.remove(); }
+}
+$("#copy").onclick = () => copyText(asText(), "Liste kopiert");
 $("#print").onclick = () => window.print();
 let clearArm = 0;
 $("#clear").onclick = ev => {
@@ -980,6 +1004,208 @@ $("#lexgrid").addEventListener("click", ev => {
   const l = getLin(b.dataset.lin);
   addEntry({id:b.dataset.item, v:{fmt:l.fmt, lin:l.id}, qty:1});
 });
+
+/* ---------- QR-Code-Encoder (Byte-Modus, Fehlerkorrektur M oder L) ---------- */
+const QR = (() => {
+  // Fehlerkorrektur-Bytes pro Block und Anzahl Blöcke je Version (Index = Version 1–40)
+  const ECC = {L:[-1,7,10,15,20,26,18,20,24,30,18,20,24,26,30,22,24,28,30,28,28,28,28,30,30,26,28,30,30,30,30,30,30,30,30,30,30,30,30,30,30],
+               M:[-1,10,16,26,18,24,16,18,22,22,26,30,22,22,24,24,28,28,26,26,26,26,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28,28]};
+  const BLK = {L:[-1,1,1,1,1,1,2,2,2,2,4,4,4,4,4,6,6,6,6,7,8,8,9,9,10,12,12,12,13,14,15,16,17,18,19,19,20,21,22,24,25],
+               M:[-1,1,1,1,2,2,4,4,4,5,5,5,8,9,9,10,10,11,13,14,16,17,17,18,20,21,23,25,26,28,29,31,33,35,37,38,40,43,45,47,49]};
+  const FBITS = {L:1, M:0};
+  const rawMods = v => { let r = (16*v+128)*v+64; if(v>=2){ const n = Math.floor(v/7)+2; r -= (25*n-10)*n-55; if(v>=7) r -= 36; } return r; };
+  const dataCw = (v,e) => Math.floor(rawMods(v)/8) - ECC[e][v]*BLK[e][v];
+  const gmul = (x,y) => { let z = 0; for(let i=7;i>=0;i--){ z = (z<<1) ^ ((z>>>7)*0x11D); z ^= ((y>>>i)&1)*x; } return z; };
+  function rsDivisor(d){ const r = new Array(d).fill(0); r[d-1] = 1; let root = 1;
+    for(let i=0;i<d;i++){ for(let j=0;j<d;j++){ r[j] = gmul(r[j],root); if(j+1<d) r[j] ^= r[j+1]; } root = gmul(root,2); } return r; }
+  function rsRemainder(data, div){ const r = div.map(()=>0);
+    for(const b of data){ const f = b ^ r.shift(); r.push(0); div.forEach((c,i) => { r[i] ^= gmul(c,f); }); } return r; }
+  function alignPos(v){ if(v===1) return []; const n = Math.floor(v/7)+2, size = v*4+17;
+    const step = v===32 ? 26 : Math.ceil((v*4+4)/(n*2-2))*2; const res = [6];
+    for(let pos=size-7; res.length<n; pos-=step) res.splice(1,0,pos); return res; }
+  const MASKS = [(x,y)=>(x+y)%2===0,(x,y)=>y%2===0,(x,y)=>x%3===0,(x,y)=>(x+y)%3===0,(x,y)=>(Math.floor(x/3)+Math.floor(y/2))%2===0,
+                 (x,y)=>x*y%2+x*y%3===0,(x,y)=>(x*y%2+x*y%3)%2===0,(x,y)=>((x+y)%2+x*y%3)%2===0];
+  function penalty(M, n){
+    let p = 0;
+    for(let pass=0; pass<2; pass++) for(let i=0;i<n;i++){
+      let run = 1, line = "";
+      for(let j=0;j<n;j++){ const c = pass ? M[j][i] : M[i][j]; line += c ? "1" : "0";
+        if(j>0 && c===(pass ? M[j-1][i] : M[i][j-1])){ run++; if(run===5) p += 3; else if(run>5) p++; } else run = 1; }
+      for(const pat of ["00001011101","10111010000"]){ let k = line.indexOf(pat); while(k!==-1){ p += 40; k = line.indexOf(pat,k+1); } }
+    }
+    for(let y=0;y<n-1;y++) for(let x=0;x<n-1;x++){ const c = M[y][x]; if(c===M[y][x+1] && c===M[y+1][x] && c===M[y+1][x+1]) p += 3; }
+    let dark = 0; for(const r of M) for(const c of r) if(c) dark++;
+    p += Math.max(0, Math.ceil(Math.abs(dark*20 - n*n*10)/(n*n)) - 1) * 10;
+    return p;
+  }
+  function encode(text, maxVer=40){
+    const bytes = Array.from(new TextEncoder().encode(text));
+    const fits = e => { for(let v=1; v<=maxVer; v++) if(4 + (v<=9?8:16) + bytes.length*8 <= dataCw(v,e)*8) return v; return 0; };
+    // M bevorzugt (robuster), bei langen Listen L, wenn das eine kleinere Version ergibt
+    let ecl = "M", ver = fits("M");
+    if(!ver || ver>10){ const vl = fits("L"); if(vl && (!ver || vl<ver)){ ecl = "L"; ver = vl; } }
+    if(!ver) return null;
+    const bits = [], put = (val,len) => { for(let i=len-1;i>=0;i--) bits.push((val>>>i)&1); };
+    put(4,4); put(bytes.length, ver<=9 ? 8 : 16); bytes.forEach(b => put(b,8));
+    const cap = dataCw(ver,ecl)*8;
+    put(0, Math.min(4, cap-bits.length)); put(0, (8 - bits.length%8) % 8);
+    for(let pad=0xEC; bits.length<cap; pad ^= 0xEC^0x11) put(pad,8);
+    const data = []; for(let i=0;i<bits.length;i+=8){ let b = 0; for(let j=0;j<8;j++) b = (b<<1)|bits[i+j]; data.push(b); }
+    // Fehlerkorrektur und Verschränkung der Blöcke
+    const nb = BLK[ecl][ver], ecLen = ECC[ecl][ver], raw = Math.floor(rawMods(ver)/8);
+    const nShort = nb - raw%nb, shortLen = Math.floor(raw/nb), div = rsDivisor(ecLen), blocks = [];
+    for(let i=0,k=0;i<nb;i++){ const len = shortLen-ecLen+(i<nShort?0:1); const dat = data.slice(k,k+len); k += len;
+      const ec = rsRemainder(dat, div); if(i<nShort) dat.push(0); blocks.push(dat.concat(ec)); }
+    const cw = []; for(let i=0;i<blocks[0].length;i++) blocks.forEach((b,j) => { if(i!==shortLen-ecLen || j>=nShort) cw.push(b[i]); });
+    // Matrix mit Funktionsmustern
+    const size = ver*4+17, M = [...Array(size)].map(()=>Array(size).fill(false)), F = [...Array(size)].map(()=>Array(size).fill(false));
+    const set = (x,y,d) => { M[y][x] = d; F[y][x] = true; };
+    for(let i=0;i<size;i++){ set(6,i,i%2===0); set(i,6,i%2===0); }
+    const finder = (cx,cy) => { for(let dy=-4;dy<=4;dy++) for(let dx=-4;dx<=4;dx++){ const x = cx+dx, y = cy+dy;
+      if(x<0||y<0||x>=size||y>=size) continue; const d = Math.max(Math.abs(dx),Math.abs(dy)); set(x,y,d!==2&&d!==4); } };
+    finder(3,3); finder(size-4,3); finder(3,size-4);
+    const ap = alignPos(ver), na = ap.length;
+    for(let i=0;i<na;i++) for(let j=0;j<na;j++){ if((i===0&&j===0)||(i===0&&j===na-1)||(i===na-1&&j===0)) continue;
+      for(let dy=-2;dy<=2;dy++) for(let dx=-2;dx<=2;dx++) set(ap[i]+dx, ap[j]+dy, Math.max(Math.abs(dx),Math.abs(dy))!==1); }
+    const drawFormat = mask => { const d = (FBITS[ecl]<<3)|mask; let r = d; for(let i=0;i<10;i++) r = (r<<1)^((r>>>9)*0x537);
+      const b = ((d<<10)|r)^0x5412, g = i => ((b>>>i)&1)===1;
+      for(let i=0;i<=5;i++) set(8,i,g(i)); set(8,7,g(6)); set(8,8,g(7)); set(7,8,g(8)); for(let i=9;i<15;i++) set(14-i,8,g(i));
+      for(let i=0;i<8;i++) set(size-1-i,8,g(i)); for(let i=8;i<15;i++) set(8,size-15+i,g(i)); set(8,size-8,true); };
+    drawFormat(0);
+    if(ver>=7){ let r = ver; for(let i=0;i<12;i++) r = (r<<1)^((r>>>11)*0x1F25); const b = (ver<<12)|r;
+      for(let i=0;i<18;i++){ const bit = ((b>>>i)&1)===1, a = size-11+i%3, c = Math.floor(i/3); set(a,c,bit); set(c,a,bit); } }
+    // Daten im Zickzack eintragen
+    let bi = 0;
+    for(let right=size-1; right>=1; right-=2){ if(right===6) right = 5;
+      for(let vert=0; vert<size; vert++) for(let j=0;j<2;j++){ const x = right-j, up = ((right+1)&2)===0, y = up ? size-1-vert : vert;
+        if(!F[y][x] && bi<cw.length*8){ M[y][x] = ((cw[bi>>>3]>>>(7-(bi&7)))&1)===1; bi++; } } }
+    // beste Maske wählen
+    const applyMask = m => { for(let y=0;y<size;y++) for(let x=0;x<size;x++) if(!F[y][x] && MASKS[m](x,y)) M[y][x] = !M[y][x]; };
+    let best = 0, bestP = Infinity;
+    for(let m=0;m<8;m++){ applyMask(m); drawFormat(m); const pp = penalty(M,size); if(pp<bestP){ bestP = pp; best = m; } applyMask(m); }
+    applyMask(best); drawFormat(best);
+    return {size, M, ver, ecl};
+  }
+  function svg(q, label){
+    let d = "";
+    for(let y=0;y<q.size;y++){ let x = 0; while(x<q.size){ if(!q.M[y][x]){ x++; continue; } let w = 0; while(x+w<q.size && q.M[y][x+w]) w++; d += `M${x} ${y}h${w}v1h-${w}z`; x += w; } }
+    const v = q.size+8;
+    return `<svg class="qr" viewBox="-4 -4 ${v} ${v}" role="img" aria-label="${esc(label)}"><rect x="-4" y="-4" width="${v}" height="${v}" fill="#fff"/><path d="${d}" fill="#000" shape-rendering="crispEdges"/></svg>`;
+  }
+  return {encode, svg};
+})();
+
+/* ---------- Teilen per Link ----------
+   Format:  #1:heft.A4.26*3~buntstifte.24~_.<base64url>!<base64url>
+   1:      Formatversion        ~  trennt Einträge     .  trennt Felder
+   *N      Menge (wenn > 1)     _. eigener Eintrag      !  Notiz (optional)
+   Freitext ist Base64url-kodiert, damit Umlaute und Sonderzeichen den Link nicht stören. */
+const SHARE_VER = "1";
+const FIELDS = {heft:["fmt","lin"], karte:["fmt","pat"], paper:["fmt"], mm:["fmt"], color:["color"], pencil:["hard"], ruler:["len"], set:["count"]};
+const b64e = str => { let bin = ""; new TextEncoder().encode(str).forEach(c => bin += String.fromCharCode(c));
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); };
+const b64d = str => { str = str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4) str += "=";
+  return new TextDecoder().decode(Uint8Array.from(atob(str), c => c.charCodeAt(0))); };
+function encodeList(items, withNotes){
+  return SHARE_VER + ":" + items.map(x => {
+    let core = x.id==="custom" ? "_." + b64e(x.v.text) : [x.id, ...(FIELDS[itemById(x.id).kind]||[]).map(k => x.v[k])].join(".");
+    if(x.qty>1) core += "*" + x.qty;
+    if(withNotes && x.note && x.note.trim()) core += "!" + b64e(x.note.trim());
+    return core;
+  }).join("~");
+}
+function validVariant(it, v){
+  switch(it.kind){
+    case "heft": return !!FMT[v.fmt] && /^\d{1,2}[A-Z]?$/.test(v.lin||"");
+    case "karte": return !!FMT[v.fmt] && ["liniert","kariert","blanko"].includes(v.pat);
+    case "paper": return !!FMT[v.fmt];
+    case "mm": return v.fmt==="A4";
+    case "color": return !!COLORS[v.color];
+    case "pencil": return /^(HB|F|[2-9]?[BH])$/.test(v.hard||"");
+    case "ruler": v.len = +v.len; return v.len>=5 && v.len<=100;
+    case "set": v.count = +v.count; return v.count>=1 && v.count<=100;
+    default: return true;
+  }
+}
+function decodeList(str){
+  const m = /^(\d+):(.*)$/s.exec(str); if(!m) return null;
+  if(m[1]!==SHARE_VER) return {items:[], skipped:0, unsupported:true};
+  const items = []; let skipped = 0;
+  for(const raw of m[2].split("~").slice(0,300)){
+    if(!raw) continue;
+    try{
+      let [main, note] = raw.split("!"), qty = 1;
+      const q = /\*(\d{1,3})$/.exec(main); if(q){ qty = Math.max(1, Math.min(99, +q[1])); main = main.slice(0, q.index); }
+      const parts = main.split("."); let e;
+      if(parts[0]==="_"){ const t = b64d(parts[1]||"").trim().slice(0,200); if(!t) throw 0; e = {id:"custom", v:{text:t}}; }
+      else { const it = itemById(parts[0]); if(!it) throw 0; const v = {};
+        (FIELDS[it.kind]||[]).forEach((k,i) => { v[k] = parts[i+1]; }); if(!validVariant(it,v)) throw 0; e = {id:it.id, v}; }
+      e.qty = qty; e.note = note ? b64d(note).trim().slice(0,200) : "";
+      items.push(e);
+    }catch(_){ skipped++; }
+  }
+  return {items, skipped};
+}
+const shareBase = () => /^https?:$/.test(location.protocol) ? location.origin + location.pathname : "https://mkrgr.github.io/schulkram/";
+const shareUrl = () => shareBase() + "#" + encodeList(state.items, $("#shnotes").checked);
+
+function updateListQR(){
+  const fig = $("#listqrfig");
+  const q = state.items.length ? QR.encode(shareUrl(), 20) : null;   // > Version 20 wäre im Druck zu fein
+  if(!q){ fig.hidden = true; return; }
+  $("#listqr").innerHTML = QR.svg(q, "QR-Code: diese Liste öffnen");
+  // Druckgröße wächst mit der Version: ca. 0,5 mm pro Modul, damit Handys ihn sicher lesen
+  const cm = Math.max(2.4, (q.size + 8) * 0.05).toFixed(2) + "cm";
+  Object.assign($("#listqr svg").style, {width: cm, height: cm});
+  fig.hidden = false;
+}
+$("#shnotes").addEventListener("change", updateListQR);
+window.addEventListener("beforeprint", updateListQR);
+
+$("#share").onclick = async () => {
+  if(!state.items.length){ toast("Die Liste ist noch leer"); return; }
+  const url = shareUrl();
+  if(navigator.share && matchMedia("(pointer:coarse)").matches){
+    try{ await navigator.share({title:"Schulkram-Liste", text:"Einkaufsliste für Schulsachen" + (state.klasse ? ` (Klasse ${state.klasse})` : ""), url}); return; }
+    catch(e){ if(e && e.name==="AbortError") return; }
+  }
+  copyText(url, "Link kopiert – z. B. in WhatsApp oder eine Mail einfügen");
+};
+
+function importItems(items, mode){
+  if(mode==="replace") state.items = [];
+  items.forEach(e => {
+    const ex = state.items.find(x => keyOf(x)===keyOf(e));
+    if(ex){ ex.qty += e.qty; if(e.note && !ex.note) ex.note = e.note; }
+    else state.items.push({uid:uid(), id:e.id, v:e.v, qty:e.qty, done:false, note:e.note||""});
+  });
+  save(); renderList();
+}
+let pendingImport = null;
+function checkHash(){
+  let h = location.hash.slice(1);
+  if(!h) return;
+  try{ h = decodeURIComponent(h); }catch(_){}
+  const res = decodeList(h);
+  if(!res) return;                                   // kein Listen-Link
+  history.replaceState(null, "", location.pathname + location.search);
+  if(res.unsupported){ toast("Dieser Link stammt aus einer neueren Version"); return; }
+  if(!res.items.length){ toast("In diesem Link war keine gültige Liste"); return; }
+  const note = res.skipped ? ` (${res.skipped} unbekannte Einträge übersprungen)` : "";
+  if(!state.items.length){ importItems(res.items, "replace"); toast(`Geteilte Liste geladen${note}`); return; }
+  pendingImport = res;
+  const n = res.items.reduce((a,e) => a + e.qty, 0);
+  $("#imptitle").textContent = `Geteilte Liste: ${res.items.length} Einträge, ${n} Teile`;
+  const names = res.items.slice(0,4).map(e => describe(e).t);
+  $("#impsub").textContent = names.join(" · ") + (res.items.length>4 ? " …" : "") + note;
+  $("#imp").hidden = false;
+  $("#imp").scrollIntoView({block:"nearest", behavior:"smooth"});
+}
+const closeImport = () => { pendingImport = null; $("#imp").hidden = true; };
+$("#impadd").onclick = () => { if(pendingImport) importItems(pendingImport.items, "add"); closeImport(); toast("Zur Liste hinzugefügt"); };
+$("#imprep").onclick = () => { if(pendingImport) importItems(pendingImport.items, "replace"); closeImport(); toast("Liste ersetzt"); };
+$("#impno").onclick = () => { closeImport(); };
+window.addEventListener("hashchange", checkHash);
 
 /* ---------- Lupe ---------- */
 const dlg = $("#lupedlg"), lpage = $("#lpage"), lens = $("#lens"), stage = $("#lstage");
@@ -1037,6 +1263,7 @@ document.addEventListener("click", ev => {
 }, true);
 
 renderList();
+checkHash();
 </script>
 </body>
 </html>
