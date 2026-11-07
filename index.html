@@ -95,11 +95,28 @@ h1 span{color:var(--accent)}
 .pg.zoom{overflow:hidden;filter:none;border-radius:8px;border:1.5px solid #b9b19e;background:#fff}
 .pg.zoom .l{stroke-width:1.2px}.pg.zoom .lb{stroke-width:1.8px}.pg.zoom .r{stroke-width:1.6px}
 .pg.zoom .mmf{stroke-width:.6px}.pg.zoom .mmm{stroke-width:1px}.pg.zoom .mmb{stroke-width:1.6px}
-.zw{position:relative;line-height:0}
-.zw::after{content:"";position:absolute;right:-5px;bottom:-5px;width:16px;height:16px;border-radius:50%;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6a79' stroke-width='3' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='6'/%3E%3Cpath d='M15 15l6 6'/%3E%3C/svg%3E") center/11px no-repeat;border:1px solid var(--line)}
-.fw{position:relative;line-height:0}
-.fmtb{position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);background:var(--ink);color:var(--card);font:700 10px/1 "Atkinson Hyperlegible",sans-serif;padding:2px 5px;border-radius:4px;letter-spacing:.03em;white-space:nowrap}
+.zw{position:relative;line-height:0;display:block}
+.zw::after{content:"";position:absolute;right:3px;bottom:3px;width:18px;height:18px;border-radius:50%;background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6a79' stroke-width='3' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='6'/%3E%3Cpath d='M15 15l6 6'/%3E%3C/svg%3E") center/11px no-repeat;border:1px solid var(--line)}
+.fw{position:relative;line-height:0;display:block}
+.fmtb{position:absolute;left:3px;bottom:3px;background:var(--ink);color:var(--card);font:700 10px/1 "Atkinson Hyperlegible",sans-serif;padding:2px 5px;border-radius:4px;letter-spacing:.03em;white-space:nowrap}
 .ico{display:block;flex:none}
+button.lupe{border:0;padding:3px;margin:-3px;background:none;cursor:zoom-in;border-radius:10px;font:inherit;color:inherit}
+button.lupe:hover .zw::after,button.lupe:focus-visible .zw::after{transform:scale(1.25);border-color:var(--accent2)}
+button.lupe:hover .pg.zoom{border-color:var(--accent2)}
+button.lupe:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+#lupedlg{border:2px solid var(--ink);border-radius:16px;background:var(--card);color:var(--ink);padding:14px 16px 12px;max-width:calc(100vw - 24px);box-shadow:var(--shadow)}
+#lupedlg::backdrop{background:rgba(18,20,28,.6)}
+.lhead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:10px}
+.lt{font:700 24px/1.1 Kalam,cursive}
+.ls{color:var(--muted);font-size:14px;margin-top:2px}
+.lclose{border:1px solid var(--line);background:transparent;border-radius:9px;width:36px;height:36px;font-size:22px;cursor:pointer;flex:none}
+.lclose:hover{border-color:var(--ink)}
+.lstage{position:relative;display:flex;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;overflow:hidden;border-radius:10px;background:color-mix(in srgb,var(--bg) 70%,var(--card));padding:14px}
+.lstage .pg{cursor:crosshair}
+.lens{position:absolute;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;overflow:hidden;border:3px solid var(--ink);box-shadow:0 10px 26px rgba(0,0,0,.35),inset 0 0 0 2px #fff;background:#e9e3d3;pointer-events:none}
+.lens svg{display:block;width:100%;height:100%}
+.lens .pg.zoom{border:0;border-radius:0}
+.lhint{margin:8px 0 0;color:var(--muted);font-size:13px;text-align:center}
 .emo{display:grid;place-items:center;border-radius:12px;background:color-mix(in srgb,var(--bg) 70%,var(--card));border:1px solid var(--line);flex:none}
 
 /* Liste */
@@ -125,7 +142,7 @@ h1 span{color:var(--accent)}
 .chk input:checked+span{background:var(--ok);border-color:var(--ok)}
 .chk input:checked+span::after{content:"";width:7px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
 .chk input:focus-visible+span{outline:3px solid var(--accent2);outline-offset:2px}
-.rvis{grid-area:vis;display:flex;justify-content:center;overflow:hidden}
+.rvis{grid-area:vis;display:flex;justify-content:center}
 .rvis .ico,.sug .ico{max-width:108px;height:auto}
 .rtxt{grid-area:txt;min-width:0}
 .rt{font-weight:700}
@@ -163,8 +180,11 @@ details.lex summary::after{content:"＋";font-size:22px;color:var(--muted)}
 details.lex[open] summary::after{content:"－"}
 .lexnote{margin:-6px 18px 12px;color:var(--muted);font-size:14px}
 .lexgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;padding:0 14px 16px}
-.lexgrid button{display:flex;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);border-radius:12px;background:transparent;padding:10px;cursor:pointer}
-.lexgrid button:hover{border-color:var(--accent2);background:var(--hl)}
+.lexgrid .tile{display:flex;gap:12px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px}
+.lexgrid .tile:hover{border-color:var(--accent2)}
+.lexgrid .add{flex:1;text-align:left;border:0;background:transparent;padding:4px;border-radius:8px;cursor:pointer}
+.lexgrid .add:hover{background:var(--hl)}
+.lexgrid .add em{display:block;font:700 14px Kalam,cursive;color:var(--accent2);font-style:normal;margin-top:4px}
 .lexgrid .n{font:700 20px Kalam,cursive;line-height:1}
 .lexgrid .d{font-size:13px;color:var(--muted);line-height:1.3}
 footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
@@ -249,6 +269,11 @@ footer a{color:inherit}
   </details>
   <footer>Die Liste bleibt in diesem Browser gespeichert. · <a href="https://github.com/mkrgr/schulkram">github.com/mkrgr/schulkram</a></footer>
 </div>
+<dialog id="lupedlg" aria-labelledby="lupet">
+  <div class="lhead"><div><div class="lt" id="lupet"></div><div class="ls" id="lupes"></div></div><button type="button" class="lclose" aria-label="Schließen">×</button></div>
+  <div class="lstage" id="lstage"><div id="lpage"></div><div class="lens" id="lens"></div></div>
+  <p class="lhint">Mit der Maus oder dem Finger über die Seite fahren.</p>
+</dialog>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -448,12 +473,17 @@ function svgZoom(pd, W, H){
   const zy = Math.max(0, Math.min(pd.g.top-3, pd.h-zh));
   return `<svg class="pg zoom" viewBox="${r1(zx)} ${r1(zy)} ${r1(zw)} ${r1(zh)}" width="${W}" height="${H}" preserveAspectRatio="xMinYMin slice" aria-hidden="true"><rect class="paper" x="-5" y="-5" width="${pd.w+10}" height="${pd.h+10}"/>${pd.inner}</svg>`;
 }
-function pageVis(pat, fmt, quer, size){
+const LUPE = new Map();
+function pageVis(pat, fmt, quer, size, title="", sub=""){
   const pd = pageData(pat, fmt, quer);
+  const key = String(LUPE.size);
+  const sig = JSON.stringify([pat,fmt,quer,title,sub]);
+  let k = [...LUPE.entries()].find(([,v]) => v.sig===sig)?.[0];
+  if(k==null){ k = key; LUPE.set(k, {sig, pat, fmt, quer, title, sub}); }
   const H = size==="lg" ? 190 : size==="md" ? 84 : 58;
   const zW = size==="lg" ? 240 : size==="md" ? 100 : 66, zH = size==="lg" ? 140 : size==="md" ? 84 : 58;
-  const zoom = pat.t==="blanko" || pat.t==="unknown" ? "" : `<div class="zw">${svgZoom(pd,zW,zH)}</div>`;
-  return `<div class="vis" style="${size==="lg"?"gap:14px;flex-direction:column":""}"><div class="fw">${svgPage(pd,H)}<span class="fmtb">${esc(fmt)}${quer?" quer":""}</span></div>${zoom}</div>`;
+  const zoom = pat.t==="blanko" || pat.t==="unknown" ? "" : `<span class="zw">${svgZoom(pd,zW,zH)}</span>`;
+  return `<button type="button" class="vis lupe" data-lupe="${k}" title="Mit der Lupe ansehen" aria-label="${esc(title||"Seite")} mit der Lupe ansehen" style="${size==="lg"?"gap:14px;flex-direction:column":""}"><span class="fw">${svgPage(pd,H)}<span class="fmtb">${esc(fmt)}${quer?" quer":""}</span></span>${zoom}</button>`;
 }
 
 /* ---------- Zeichnen: Dinge ---------- */
@@ -603,8 +633,10 @@ function vis(e, size="sm"){
   const H = size==="lg" ? 150 : size==="md" ? 72 : 54;
   if(!it) return emoTile("📝", H);
   switch(it.kind){
-    case "heft": case "paper": case "mm": return pageVis(patFor(e), e.v.fmt, false, size);
-    case "karte": return pageVis(patFor(e), e.v.fmt, true, size);
+    case "heft": case "paper": case "mm": case "karte": {
+      const d = describe(e);
+      return pageVis(patFor(e), e.v.fmt, it.kind==="karte", size, d.t, d.s);
+    }
     case "color": return colorSVG(it.shape, e.v.color, it.shape==="kuli" ? Math.round(H*.45) : H);
     case "pencil": return pencilSVG(e.v.hard, Math.round(H*.55));
     case "ruler": return rulerSVG(e.v.len, H);
@@ -940,16 +972,69 @@ function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add
 /* ---------- Lineaturen-Übersicht ---------- */
 $("#lexgrid").innerHTML = LIN.map(l => {
   const item = l.id==="14" ? "notenheft" : ["53","54"].includes(l.id) ? "vokabelheft" : "heft";
-  const pd = pageData(l, l.fmt, false);
-  return `<button type="button" data-lin="${l.id}" data-item="${item}">
-    <div class="fw">${svgPage(pd,72)}<span class="fmtb">${l.fmt}</span></div>
-    <div><div class="n">Lin. ${l.id}</div><div class="d">${esc(l.d)}${l.kls?"<br>"+esc(l.kls):""}</div></div></button>`;
+  return `<div class="tile">${pageVis(l, l.fmt, false, "md", `Lineatur ${l.id} (${l.fmt})`, l.d+(l.kls?" · "+l.kls:"")).replace(/<span class="zw">[\s\S]*?<\/svg><\/span>/,"")}
+    <button type="button" class="add" data-lin="${l.id}" data-item="${item}"><div class="n">Lin. ${l.id}</div><div class="d">${esc(l.d)}${l.kls?"<br>"+esc(l.kls):""}</div><em>+ auf die Liste</em></button></div>`;
 }).join("");
 $("#lexgrid").addEventListener("click", ev => {
   const b = ev.target.closest("button[data-lin]"); if(!b) return;
   const l = getLin(b.dataset.lin);
   addEntry({id:b.dataset.item, v:{fmt:l.fmt, lin:l.id}, qty:1});
 });
+
+/* ---------- Lupe ---------- */
+const dlg = $("#lupedlg"), lpage = $("#lpage"), lens = $("#lens"), stage = $("#lstage");
+let lupeCur = null, lupePt = {x:0, y:0};
+const LENS_MM = 11; // Radius des Lupen-Ausschnitts in mm (= ca. 22 mm Durchmesser)
+function openLupe(k){
+  const L = LUPE.get(k); if(!L) return;
+  const pd = pageData(L.pat, L.fmt, L.quer);
+  const maxW = Math.min(window.innerWidth - 80, 680), maxH = Math.min(window.innerHeight * .66, 600);
+  const H = Math.round(Math.min(maxH, maxW * pd.h / pd.w));
+  lpage.innerHTML = svgPage(pd, H);
+  lens.innerHTML = `<svg class="pg zoom" viewBox="0 0 ${LENS_MM*2} ${LENS_MM*2}" aria-hidden="true"><rect class="paper" width="${pd.w}" height="${pd.h}"/>${pd.inner}</svg>`;
+  $("#lupet").textContent = L.title || `Lineatur ${L.pat.id||""}`;
+  $("#lupes").textContent = L.sub || "";
+  lupeCur = pd;
+  if(typeof dlg.showModal === "function") dlg.showModal(); else dlg.setAttribute("open","");
+  // Startpunkt: oben links am Rand, dort sieht man Rand und Linien zugleich
+  requestAnimationFrame(() => {
+    const r = lpage.firstElementChild.getBoundingClientRect();
+    const sx = pd.g.rand==="none" ? .3 : (pd.g.x0 + 4) / pd.w;
+    moveLens(r.left + r.width*sx, r.top + r.height*.22, false);
+  });
+}
+function moveLens(cx, cy, touch){
+  if(!lupeCur) return;
+  const svg = lpage.firstElementChild; if(!svg) return;
+  lupePt = {x:cx, y:cy};
+  const r = svg.getBoundingClientRect(), st = stage.getBoundingClientRect();
+  const x = Math.max(0, Math.min(r.width, cx - r.left)), y = Math.max(0, Math.min(r.height, cy - r.top));
+  const mx = x / r.width * lupeCur.w, my = y / r.height * lupeCur.h;
+  lens.firstElementChild.setAttribute("viewBox", `${r1(mx-LENS_MM)} ${r1(my-LENS_MM)} ${LENS_MM*2} ${LENS_MM*2}`);
+  // Lupe bleibt ganz sichtbar; der Ausschnitt folgt trotzdem genau dem Zeiger
+  const half = lens.offsetWidth / 2 + 4;
+  const clamp = (v, max) => Math.max(half, Math.min(max - half, v));
+  lens.style.left = clamp(r.left - st.left + x, st.width) + "px";
+  lens.style.top = clamp(r.top - st.top + y - (touch ? 90 : 0), st.height) + "px";
+}
+stage.addEventListener("pointermove", ev => moveLens(ev.clientX, ev.clientY, ev.pointerType==="touch"));
+stage.addEventListener("pointerdown", ev => { stage.setPointerCapture?.(ev.pointerId); moveLens(ev.clientX, ev.clientY, ev.pointerType==="touch"); });
+dlg.addEventListener("keydown", ev => {
+  if(!lupeCur || !["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(ev.key)) return;
+  ev.preventDefault();
+  const r = lpage.firstElementChild.getBoundingClientRect();
+  const lx = Math.max(r.left, Math.min(r.right, lupePt.x)), ly = Math.max(r.top, Math.min(r.bottom, lupePt.y)), step = ev.shiftKey ? 40 : 12;
+  moveLens(lx + (ev.key==="ArrowRight"?step:ev.key==="ArrowLeft"?-step:0), ly + (ev.key==="ArrowDown"?step:ev.key==="ArrowUp"?-step:0), false);
+});
+dlg.querySelector(".lclose").onclick = () => dlg.close();
+dlg.addEventListener("click", ev => { if(ev.target === dlg) dlg.close(); });
+dlg.addEventListener("close", () => { lupeCur = null; });
+// Capture-Phase: Lupen-Klick hat Vorrang vor "Vorschlag übernehmen"
+document.addEventListener("click", ev => {
+  const b = ev.target.closest("button.lupe"); if(!b) return;
+  ev.preventDefault(); ev.stopPropagation();
+  openLupe(b.dataset.lupe);
+}, true);
 
 renderList();
 </script>
